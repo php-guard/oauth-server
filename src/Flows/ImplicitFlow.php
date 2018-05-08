@@ -28,7 +28,7 @@ class ImplicitFlow extends AbstractGrantType implements FlowInterface
     public function handleAuthorizationRequest(AuthorizationEndpoint $authorizationEndpoint, array $requestData): array
     {
         $data = $this->issueAccessToken(
-            implode(' ', $authorizationEndpoint->getScopes()),
+            $authorizationEndpoint->getScopes(),
             $authorizationEndpoint->getClient()->getIdentifier(),
             $authorizationEndpoint->getResourceOwner()->getIdentifier()
         );
