@@ -1,12 +1,12 @@
 {
-    "name": "alexandre-le-borgne/oauth-server",
+    "name": "php-guard/oauth-server",
     "description": "Oauth2 PHP server supporting openid",
     "type": "library",
     "license": "GPL-3.0-or-later",
     "authors": [
         {
             "name": "Alexandre Le Borgne",
-            "email": "alex83690@live.fr"
+            "email": "alexandre.leborgne.83@gmail.com"
         }
     ],
     "minimum-stability": "stable",
