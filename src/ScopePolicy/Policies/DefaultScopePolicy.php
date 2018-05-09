@@ -23,8 +23,8 @@ class DefaultScopePolicy implements ScopePolicyInterface
         $this->scopes = $scopes;
     }
 
-    public function getScopes(ClientInterface $client, ?string $scope): array
+    public function getScopes(ClientInterface $client, ?array $scopes): array
     {
-        return is_null($scope) ? $this->scopes : explode(' ', $scope);
+        return empty($scopes) ? $this->scopes : $scopes;
     }
 }

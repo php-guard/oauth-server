@@ -58,10 +58,15 @@ class ClientCredentialsFlow extends AbstractGrantType implements FlowInterface
                 'https://tools.ietf.org/html/rfc6749#section-4.4');
         }
 
-        $scopes = $this->scopePolicyManager->getScopes($tokenEndpoint->getClient(), $requestData['scope'] ?? null);
+        $scopes = $this->scopePolicyManager->getScopes($tokenEndpoint->getClient(), $requestData['scope'] ?? null, $requestedScopes);
         $this->scopePolicyManager->verifyScopes($tokenEndpoint->getClient(), $scopes);
 
-        return $this->issueAccessToken($scopes, $tokenEndpoint->getClient()->getIdentifier(), null);
+        $responseData = $this->issueAccessToken($scopes, $tokenEndpoint->getClient()->getIdentifier(), null);
+        if(is_null($requestedScopes) || array_diff($requestedScopes, $scopes)) {
+            $responseData['scope'] = implode(' ', $scopes);
+        }
+
+        return $responseData;
     }
 
     public function handleAuthorizationRequest(AuthorizationEndpoint $authorizationEndpoint, array $requestData): array

@@ -18,6 +18,7 @@ use OAuth2\ScopePolicy\ScopePolicyManager;
 use OAuth2\Storages\AccessTokenStorageInterface;
 use OAuth2\Storages\RefreshTokenStorageInterface;
 use OAuth2\Storages\ResourceOwnerStorageInterface;
+use Symfony\Component\VarDumper\VarDumper;
 
 class ResourceOwnerPasswordCredentialsFlow extends AbstractGrantType implements FlowInterface
 {
@@ -72,7 +73,7 @@ class ResourceOwnerPasswordCredentialsFlow extends AbstractGrantType implements 
 
         $client = $tokenEndpoint->getClient();
 
-        $scopes = $this->scopePolicyManager->getScopes($client, $requestData['scope'] ?? null);
+        $scopes = $this->scopePolicyManager->getScopes($client, $requestData['scope'] ?? null, $requestedScopes);
         $this->scopePolicyManager->verifyScopes($client, $scopes);
 
         $resourceOwnerIdentifier = $this->resourceOwnerStorage->validateCredentials(
@@ -84,7 +85,12 @@ class ResourceOwnerPasswordCredentialsFlow extends AbstractGrantType implements 
                 'https://tools.ietf.org/html/rfc7636#section-4.3');
         }
 
-        return $this->issueTokens($scopes, $client->getIdentifier(), $resourceOwnerIdentifier);
+        $responseData = $this->issueTokens($scopes, $client->getIdentifier(), $resourceOwnerIdentifier);
+        if(is_null($requestedScopes) || array_diff($requestedScopes, $scopes)) {
+            $responseData['scope'] = implode(' ', $scopes);
+        }
+
+        return $responseData;
     }
 
     public function verifyAuthorizationRequest(AuthorizationEndpoint $authorizationEndpoint, array $requestData)

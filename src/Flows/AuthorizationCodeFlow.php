@@ -51,7 +51,7 @@ class AuthorizationCodeFlow extends AbstractGrantType implements FlowInterface
             $authorizationEndpoint->getScopes(),
             $authorizationEndpoint->getClient()->getIdentifier(),
             $authorizationEndpoint->getResourceOwner()->getIdentifier(),
-            isset($requestData['scope']) ? explode(' ', $requestData['scope']) : null,
+            $authorizationEndpoint->getRequestedScopes(),
             $requestData['redirect_uri'] ?? null
         );
         return ['code' => $this->authorizationCode->getCode()];
@@ -88,8 +88,6 @@ class AuthorizationCodeFlow extends AbstractGrantType implements FlowInterface
         $code = $requestData['code'];
 
         $this->authorizationCode = $this->authorizationCodeStorage->get($code);
-//VarDumper::dump($code);
-//VarDumper::dump($this->authorizationCode);die;
 
         /**
          * ensure that the authorization code was issued to the authenticated
@@ -133,11 +131,18 @@ class AuthorizationCodeFlow extends AbstractGrantType implements FlowInterface
             }
         }
 
-        return $this->issueTokens(
+        $responseData = $this->issueTokens(
             $this->authorizationCode->getScopes(),
             $this->authorizationCode->getClientIdentifier(),
             $this->authorizationCode->getResourceOwnerIdentifier(),
             $this->authorizationCode->getCode());
+
+        if(is_null($this->authorizationCode->getRequestedScopes()) ||
+            array_diff($this->authorizationCode->getRequestedScopes(), $this->authorizationCode->getScopes())) {
+            $responseData['scope'] = implode(' ', $this->authorizationCode->getScopes());
+        }
+
+        return $responseData;
     }
 
     /**

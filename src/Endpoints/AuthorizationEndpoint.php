@@ -73,6 +73,10 @@ class AuthorizationEndpoint implements EndpointInterface
     /**
      * @var array|null
      */
+    private $requestedScopes;
+    /**
+     * @var array|null
+     */
     private $requestData;
 
     public function __construct(ResponseTypeManager $responseTypeManager,
@@ -315,7 +319,9 @@ class AuthorizationEndpoint implements EndpointInterface
      */
     protected function verifyScope(?string $scope = null)
     {
-        $scopes = $this->scopePolicyManager->getScopes($this->getClient(), $scope);
+        $scopes = $this->scopePolicyManager->getScopes($this->getClient(), $scope, $requestedScopes);
+        $this->requestedScopes = $requestedScopes;
+        
         $this->scopePolicyManager->verifyScopes($this->getClient(), $scopes);
         $this->scopes = $scopes;
     }
@@ -366,6 +372,14 @@ class AuthorizationEndpoint implements EndpointInterface
     public function getScopes(): ?array
     {
         return $this->scopes;
+    }
+
+    /**
+     * @return null|array
+     */
+    public function getRequestedScopes(): ?array
+    {
+        return $this->requestedScopes;
     }
 
     /**

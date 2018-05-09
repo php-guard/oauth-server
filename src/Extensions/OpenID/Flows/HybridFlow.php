@@ -41,6 +41,7 @@ class HybridFlow implements FlowInterface
                                 RefreshTokenStorageInterface $refreshTokenStorage,
                                 IdTokenManager $idTokenManager)
     {
+        // TODO get authorization code flow in parameter to delegate grant type authorization_code
         $this->authorizationCodeStorage = $authorizationCodeStorage;
         $this->accessTokenStorage = $accessTokenStorage;
         $this->idTokenManager = $idTokenManager;
@@ -96,7 +97,7 @@ class HybridFlow implements FlowInterface
 
         if (in_array('token', $responseTypes)) {
             $accessToken = $this->accessTokenStorage->generate(
-                implode(' ', $authorizationEndpoint->getScopes()),
+                $authorizationEndpoint->getScopes(),
                 $authorizationEndpoint->getClient()->getIdentifier(),
                 $authorizationEndpoint->getResourceOwner()->getIdentifier()
             );

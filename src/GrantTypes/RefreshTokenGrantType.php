@@ -11,6 +11,7 @@ namespace OAuth2\GrantTypes;
 
 use OAuth2\Endpoints\TokenEndpoint;
 use OAuth2\Exceptions\OAuthException;
+use Symfony\Component\VarDumper\VarDumper;
 
 class RefreshTokenGrantType extends AbstractGrantType implements GrantTypeInterface
 {
@@ -37,7 +38,7 @@ class RefreshTokenGrantType extends AbstractGrantType implements GrantTypeInterf
         }
 
         // TODO Config alwaysRevokeRefreshTokenOnUse
-        $this->refreshTokenStorage->revoke($refreshToken->getToken());
+//        $this->refreshTokenStorage->revoke($refreshToken->getToken());
 
         if ($this->refreshTokenStorage->hasExpired($refreshToken)) {
             throw new OAuthException('invalid_grant',
@@ -45,10 +46,10 @@ class RefreshTokenGrantType extends AbstractGrantType implements GrantTypeInterf
                 'https://tools.ietf.org/html/rfc7636#section-4.4');
         }
 
-        $requestedScopes = explode(' ', $requestData['scope']);
         $scopes = $refreshToken->getScopes();
+        $requestedScopes = empty(trim($requestData['scope'])) ? null : array_filter(explode(' ', $requestData['scope']));
 
-        if (!empty($requestData['scope'])) {
+        if (!empty($requestedScopes)) {
             if (!empty(array_diff($requestedScopes, $refreshToken->getScopes()))) {
                 throw new OAuthException('invalid_request',
                     'The request includes the invalid parameter scope.',
@@ -58,6 +59,14 @@ class RefreshTokenGrantType extends AbstractGrantType implements GrantTypeInterf
         }
 
         // TODO Config issueTokens or only accessToken
-        return $this->issueTokens($scopes, $refreshToken->getClientIdentifier(), $refreshToken->getResourceOwnerIdentifier());
+
+        $responseData = $this->issueTokens($scopes, $refreshToken->getClientIdentifier(), $refreshToken->getResourceOwnerIdentifier());
+
+        if(is_null($requestedScopes) ||
+            array_diff($requestedScopes, $scopes)) {
+            $responseData['scope'] = implode(' ', $scopes);
+        }
+
+        return $responseData;
     }
 }

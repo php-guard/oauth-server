@@ -20,13 +20,13 @@ class ErrorScopePolicy implements ScopePolicyInterface
      * @return array|null
      * @throws OAuthException
      */
-    public function getScopes(ClientInterface $client, ?string $scope): array
+    public function getScopes(ClientInterface $client, ?array $scopes): array
     {
-        if (is_null($scope)) {
+        if (empty($scopes)) {
             throw new OAuthException('invalid_scope',
                 'The request is missing the required parameter scope.',
                 'https://tools.ietf.org/html/rfc6749#section-4.1');
         }
-        return explode(' ', $scope);
+        return $scopes;
     }
 }

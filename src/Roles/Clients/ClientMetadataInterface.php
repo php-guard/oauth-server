@@ -45,9 +45,9 @@ interface ClientMetadataInterface
     function getLogoUri(): ?string;
 
     /**
-     * @return null|string
+     * @return null|string[]
      */
-    function getScope(): ?string;
+    function getScopes(): ?array;
 
     /**
      * @return array|null
