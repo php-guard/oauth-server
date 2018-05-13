@@ -9,9 +9,9 @@
 namespace OAuth2\Tests\Storages;
 
 
-use OAuth2\Roles\Clients\ClientMetadata;
-use OAuth2\Roles\Clients\RegisteredClient;
-use OAuth2\Roles\Clients\WebApplicationClient;
+use OAuth2\Roles\ClientProfiles\WebApplicationClient;
+use OAuth2\Roles\ClientTypes\ClientMetadata;
+use OAuth2\Roles\ClientTypes\RegisteredClient;
 use OAuth2\Storages\ClientStorageInterface;
 
 class ClientStorage implements ClientStorageInterface

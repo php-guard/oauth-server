@@ -17,13 +17,52 @@ use OAuth2\ResponseModes\ResponseModeManager;
 use OAuth2\ResponseTypes\ResponseTypeInterface;
 use OAuth2\ResponseTypes\ResponseTypeManager;
 use OAuth2\Roles\ClientInterface;
-use OAuth2\Roles\Clients\RegisteredClient;
+use OAuth2\Roles\ClientTypes\ConfidentialClientInterface;
+use OAuth2\Roles\ClientTypes\PublicClient;
+use OAuth2\Roles\ClientTypes\PublicClientInterface;
+use OAuth2\Roles\ClientTypes\RegisteredClient;
 use OAuth2\Roles\ResourceOwnerInterface;
 use OAuth2\ScopePolicy\ScopePolicyManager;
 use OAuth2\Storages\ClientStorageInterface;
 use Psr\Http\Message\ResponseInterface;
 use Psr\Http\Message\ServerRequestInterface;
 
+/**
+ * Class AuthorizationEndpoint
+ * @package OAuth2\Endpoints
+ *
+ * @see https://tools.ietf.org/html/rfc6749#section-3.1
+ * The authorization endpoint is used to interact with the resource
+ * owner and obtain an authorization grant.  The authorization server
+ * MUST first verify the identity of the resource owner.  The way in
+ * which the authorization server authenticates the resource owner
+ * (e.g., username and password login, session cookies) is beyond the
+ * scope of this specification.
+ *
+ * The means through which the client obtains the location of the
+ * authorization endpoint are beyond the scope of this specification,
+ * but the location is typically provided in the service documentation.
+ *
+ * The endpoint URI MAY include an "application/x-www-form-urlencoded"
+ * formatted (per Appendix B) query component ([RFC3986] Section 3.4),
+ * which MUST be retained when adding additional query parameters.  The
+ * endpoint URI MUST NOT include a fragment component.
+ *
+ * Since requests to the authorization endpoint result in user
+ * authentication and the transmission of clear-text credentials (in the
+ * HTTP response), the authorization server MUST require the use of TLS
+ * as described in Section 1.6 when sending requests to the
+ * authorization endpoint.
+ *
+ * The authorization server MUST support the use of the HTTP "GET"
+ * method [RFC2616] for the authorization endpoint and MAY support the
+ * use of the "POST" method as well.
+ *
+ * Parameters sent without a value MUST be treated as if they were
+ * omitted from the request.  The authorization server MUST ignore
+ * unrecognized request parameters.  Request and response parameters
+ * MUST NOT be included more than once.
+ */
 class AuthorizationEndpoint implements EndpointInterface
 {
     /**
@@ -92,15 +131,16 @@ class AuthorizationEndpoint implements EndpointInterface
         $this->clientStorage = $clientStorage;
     }
 
-    public function verifyRequest(ServerRequestInterface $request): ?ResponseInterface {
+    public function verifyRequest(ServerRequestInterface $request): ?ResponseInterface
+    {
 
-        if($response = $this->parseRequestData($request)) {
+        if ($response = $this->parseRequestData($request)) {
             return $response;
         }
 
         try {
             $this->verifyClient($this->requestData['client_id'] ?? null);
-            $this->verifyRedirectUri($this->requestData['redirect_uri'] ?? null);
+            $this->verifyRedirectUri($this->requestData['redirect_uri'] ?? null, $this->requestData['response_type'] ?? null);
 
         } catch (OAuthException $e) {
             return new Response(400, ['content-type' => 'application/json'], $e->jsonSerialize());
@@ -111,7 +151,7 @@ class AuthorizationEndpoint implements EndpointInterface
             $this->responseType->verifyAuthorizationRequest($this, $this->requestData);
 
             // Authorization Server Authenticates End-User
-            if($response = $this->verifyResourceOwner()) {
+            if ($response = $this->verifyResourceOwner()) {
                 return $response;
             }
         } catch (OAuthException $e) {
@@ -140,12 +180,12 @@ class AuthorizationEndpoint implements EndpointInterface
 
     public function handleRequest(ServerRequestInterface $request): ResponseInterface
     {
-       if($response = $this->verifyRequest($request)) {
-           return $response;
-       }
+        if ($response = $this->verifyRequest($request)) {
+            return $response;
+        }
 
         try {
-            if($response = $this->verifyConsent($this->requestData)) {
+            if ($response = $this->verifyConsent($this->requestData)) {
                 return $response;
             }
 
@@ -172,7 +212,8 @@ class AuthorizationEndpoint implements EndpointInterface
         return $this->getResponseMode()->buildResponse($this, $this->requestData, $responseData);
     }
 
-    protected function parseRequestData(ServerRequestInterface $request): ?Response {
+    protected function parseRequestData(ServerRequestInterface $request): ?Response
+    {
         if ($request->getMethod() === 'GET') {
             $this->requestData = $request->getQueryParams();
         } else if ($request->getMethod() === 'POST') {
@@ -183,7 +224,8 @@ class AuthorizationEndpoint implements EndpointInterface
         return null;
     }
 
-    protected function verifyResourceOwner(): ?ResponseInterface {
+    protected function verifyResourceOwner(): ?ResponseInterface
+    {
         if (!$this->resourceOwner->isAuthenticated()) {
             return $this->resourceOwner->authenticate();
         }
@@ -195,7 +237,8 @@ class AuthorizationEndpoint implements EndpointInterface
      * @return null|ResponseInterface
      * @throws OAuthException
      */
-    protected function verifyConsent(array $requestData): ?ResponseInterface {
+    protected function verifyConsent(array $requestData): ?ResponseInterface
+    {
         $consentGiven = $this->resourceOwner->hasGivenConsent($this->getClient(), $this->getScopes());
         if (is_null($consentGiven)) {
             return $this->resourceOwner->obtainConsent($this, $requestData);
@@ -213,7 +256,8 @@ class AuthorizationEndpoint implements EndpointInterface
      * @param null|string $clientId
      * @throws OAuthException
      */
-    protected function verifyClient(?string $clientId = null) {
+    protected function verifyClient(?string $clientId = null)
+    {
         if (empty($clientId)) {
             throw new OAuthException('invalid_request', 'The request is missing the required parameter client_id.',
                 'https://tools.ietf.org/html/rfc6749#section-4.1');
@@ -275,28 +319,31 @@ class AuthorizationEndpoint implements EndpointInterface
 
     /**
      * @param null|string $redirectUri
+     * @param null|string $responseType
      * @throws OAuthException
      */
-    protected function verifyRedirectUri(?string $redirectUri = null)
+    protected function verifyRedirectUri(?string $redirectUri = null, ?string $responseType = null)
     {
         $redirectUris = $this->getClient()->getMetadata()->getRedirectUris();
-        if(empty($redirectUris)) {
-            throw new OAuthException('invalid_request',
-                'Clients using flows with redirection MUST register their redirection URI values',
-                'https://tools.ietf.org/html/rfc7591#section-2.1');
-        }
-
-        if ($redirectUri) {
-            if (!in_array($redirectUri, $redirectUris)) {
-                throw new OAuthException('invalid_request', 'The request includes the invalid parameter redirect_uri.',
-                    'https://tools.ietf.org/html/rfc6749#section-4.1');
-            }
+        if (empty($redirectUris)) {
+            if ($this->getClient() instanceof PublicClientInterface ||
+                ($this->getClient() instanceof ConfidentialClientInterface && $responseType == 'token'))
+                throw new OAuthException('invalid_request',
+                    'Clients using flows with redirection MUST register their redirection URI values',
+                    'https://tools.ietf.org/html/rfc7591#section-2.1');
         } else {
-            if (count($redirectUris) == 1) {
-                $redirectUri = $redirectUris[0];
+            if ($redirectUri) {
+                if (!in_array($redirectUri, $redirectUris)) {
+                    throw new OAuthException('invalid_request', 'The request includes the invalid parameter redirect_uri.',
+                        'https://tools.ietf.org/html/rfc6749#section-4.1');
+                }
             } else {
-                throw new OAuthException('invalid_request', 'The request is missing the required parameter redirect_uri.',
-                    'https://tools.ietf.org/html/rfc6749#section-4.1');
+                if (count($redirectUris) == 1) {
+                    $redirectUri = $redirectUris[0];
+                } else {
+                    throw new OAuthException('invalid_request', 'The request is missing the required parameter redirect_uri.',
+                        'https://tools.ietf.org/html/rfc6749#section-4.1');
+                }
             }
         }
 
@@ -321,7 +368,7 @@ class AuthorizationEndpoint implements EndpointInterface
     {
         $scopes = $this->scopePolicyManager->getScopes($this->getClient(), $scope, $requestedScopes);
         $this->requestedScopes = $requestedScopes;
-        
+
         $this->scopePolicyManager->verifyScopes($this->getClient(), $scopes);
         $this->scopes = $scopes;
     }

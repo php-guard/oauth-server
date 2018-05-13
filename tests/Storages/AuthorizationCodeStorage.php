@@ -9,7 +9,7 @@
 namespace OAuth2\Tests\Storages;
 
 
-use OAuth2\Extensions\OpenID\Storages\AuthorizationCodeStorageInterface;
+use OAuth2\Storages\AuthorizationCodeStorageInterface;
 use \OAuth2\Extensions\PKCE\Credentials\AuthorizationCode;
 use OAuth2\Credentials\AuthorizationCodeInterface;
 use OAuth2\Extensions\PKCE\Credentials\CodeChallenge;
@@ -21,7 +21,7 @@ class AuthorizationCodeStorage implements AuthorizationCodeStorageInterface,
 {
     protected $codes = [];
 
-    public function find(string $code): ?AuthorizationCodeInterface
+    public function get(string $code): ?AuthorizationCodeInterface
     {
         return $this->codes[$code] ?? null;
     }
@@ -31,12 +31,12 @@ class AuthorizationCodeStorage implements AuthorizationCodeStorageInterface,
         unset($this->codes[$code]);
     }
 
-    public function generate(string $scope, string $clientIdentifier, string $resourceOwnerIdentifier,
-                             ?string $requestedScope, ?string $redirectUri, ?string $idToken = null): AuthorizationCodeInterface
+    public function generate(array $scopes, string $clientIdentifier, string $resourceOwnerIdentifier,
+                             ?array $requestedScopes, ?string $redirectUri): AuthorizationCodeInterface
     {
-        $expiresAt = time() + 30;
-        $authorizationCode = new AuthorizationCode(Helper::generateToken($this->getSize()), $scope, $clientIdentifier, $resourceOwnerIdentifier,
-            $expiresAt, $requestedScope, $redirectUri);
+        $expiresAt = (new \DateTime('now', new \DateTimeZone('UTC')))->modify('+1 minute');
+        $authorizationCode = new AuthorizationCode(Helper::generateToken($this->getSize()), $scopes, $clientIdentifier, $resourceOwnerIdentifier,
+            $expiresAt, $requestedScopes, $redirectUri);
 
         $this->codes[$authorizationCode->getCode()] = $authorizationCode;
 

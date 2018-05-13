@@ -6,7 +6,7 @@
  * Time: 17:56
  */
 
-namespace OAuth2\GrantTypes;
+namespace OAuth2\AuthorizationGrantTypes;
 
 
 use OAuth2\Storages\AccessTokenStorageInterface;

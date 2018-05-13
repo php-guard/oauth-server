@@ -6,7 +6,7 @@
  * Time: 18:08
  */
 
-namespace OAuth2\Extensions\OpenID\Flows;
+namespace OAuth2\Extensions\OpenID\AuthorizationGrantTypes\Flows;
 
 
 use OAuth2\Endpoints\AuthorizationEndpoint;
@@ -14,7 +14,7 @@ use OAuth2\Endpoints\TokenEndpoint;
 use OAuth2\Exceptions\OAuthException;
 use OAuth2\Extensions\OpenID\Credentials\AuthorizationCodeInterface;
 use OAuth2\Extensions\OpenID\IdTokenManager;
-use OAuth2\Flows\FlowInterface;
+use OAuth2\AuthorizationGrantTypes\Flows\FlowInterface;
 use OAuth2\Storages\AuthorizationCodeStorageInterface;
 use OAuth2\Storages\AccessTokenStorageInterface;
 use OAuth2\Storages\RefreshTokenStorageInterface;

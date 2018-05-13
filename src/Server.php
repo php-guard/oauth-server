@@ -14,13 +14,13 @@ use OAuth2\ClientAuthentication\ClientSecretBasicAuthenticationMethod;
 use OAuth2\ClientAuthentication\ClientSecretPostAuthenticationMethod;
 use OAuth2\Endpoints\AuthorizationEndpoint;
 use OAuth2\Endpoints\TokenEndpoint;
-use OAuth2\Flows\AuthorizationCodeFlow;
-use OAuth2\Flows\ClientCredentialsFlow;
-use OAuth2\Flows\FlowManager;
-use OAuth2\Flows\ImplicitFlow;
-use OAuth2\Flows\ResourceOwnerPasswordCredentialsFlow;
-use OAuth2\GrantTypes\GrantTypeManager;
-use OAuth2\GrantTypes\RefreshTokenGrantType;
+use OAuth2\AuthorizationGrantTypes\Flows\AuthorizationCodeFlow;
+use OAuth2\AuthorizationGrantTypes\Flows\ClientCredentialsFlow;
+use OAuth2\AuthorizationGrantTypes\Flows\FlowManager;
+use OAuth2\AuthorizationGrantTypes\Flows\ImplicitFlow;
+use OAuth2\AuthorizationGrantTypes\Flows\ResourceOwnerPasswordCredentialsFlow;
+use OAuth2\AuthorizationGrantTypes\GrantTypeManager;
+use OAuth2\AuthorizationGrantTypes\RefreshTokenGrantType;
 use OAuth2\ResponseModes\FragmentResponseMode;
 use OAuth2\ResponseModes\QueryResponseMode;
 use OAuth2\ResponseModes\ResponseModeManager;
@@ -153,9 +153,10 @@ class Server
      * critical when the authorization process is used as a form of
      * delegated end-user authentication by the client (e.g., third-party
      * sign-in service).
+     * @deprecated
      */
     public function isSecure()
     {
-        return isset($_SERVER['HTTPS']) && ('on' == strtolower($_SERVER['HTTPS']) || 1 == $_SERVER['HTTPS']);
+        return (!empty($_SERVER['HTTPS']) && $_SERVER['HTTPS'] !== 'off') || $_SERVER['SERVER_PORT'] == 443;
     }
 }

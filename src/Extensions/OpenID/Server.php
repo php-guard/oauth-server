@@ -11,9 +11,9 @@ namespace OAuth2\Extensions\OpenID;
 
 use Firebase\JWT\JWT;
 use OAuth2\Extensions\OpenID\Endpoints\AuthorizationEndpoint;
-use OAuth2\Extensions\OpenID\Flows\AuthorizationCodeFlow;
-use OAuth2\Extensions\OpenID\Flows\HybridFlow;
-use OAuth2\Extensions\OpenID\Flows\ImplicitFlow;
+use OAuth2\Extensions\OpenID\AuthorizationGrantTypes\Flows\AuthorizationCodeFlow;
+use OAuth2\Extensions\OpenID\AuthorizationGrantTypes\Flows\HybridFlow;
+use OAuth2\Extensions\OpenID\AuthorizationGrantTypes\Flows\ImplicitFlow;
 use OAuth2\Extensions\OpenID\Roles\ResourceOwnerInterface;
 use OAuth2\Extensions\OpenID\Storages\StorageManager;
 

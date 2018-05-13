@@ -12,9 +12,41 @@ namespace OAuth2\ScopePolicy;
 use OAuth2\Config;
 use OAuth2\Exceptions\OAuthException;
 use OAuth2\Roles\ClientInterface;
-use OAuth2\Roles\Clients\RegisteredClient;
+use OAuth2\Roles\ClientTypes\RegisteredClient;
 
 
+/**
+ * Class ScopePolicyManager
+ * @package OAuth2\ScopePolicy
+ *
+ * @see https://tools.ietf.org/html/rfc6749#section-3.3
+ * The authorization and token endpoints allow the client to specify the
+ * scope of the access request using the "scope" request parameter.  In
+ * turn, the authorization server uses the "scope" response parameter to
+ * inform the client of the scope of the access token issued.
+ *
+ * The value of the scope parameter is expressed as a list of space-
+ * delimited, case-sensitive strings.  The strings are defined by the
+ * authorization server.  If the value contains multiple space-delimited
+ * strings, their order does not matter, and each string adds an
+ * additional access range to the requested scope.
+ *
+ * scope       = scope-token *( SP scope-token )
+ * scope-token = 1*( %x21 / %x23-5B / %x5D-7E )
+ *
+ * The authorization server MAY fully or partially ignore the scope
+ * requested by the client, based on the authorization server policy or
+ * the resource owner's instructions.  If the issued access token scope
+ * is different from the one requested by the client, the authorization
+ * server MUST include the "scope" response parameter to inform the
+ * client of the actual scope granted.
+ *
+ * If the client omits the scope parameter when requesting
+ * authorization, the authorization server MUST either process the
+ * request using a pre-defined default value or fail the request
+ * indicating an invalid scope.  The authorization server SHOULD
+ * document its scope requirements and default value (if defined).
+ */
 class ScopePolicyManager
 {
     /**
@@ -32,21 +64,56 @@ class ScopePolicyManager
         $this->config = $config;
     }
 
-    /**
-     * @param ClientInterface $client
-     * @param string|null     $scope
-     * @return array|null
-     */
-    public function getScopes(ClientInterface $client, ?string $scopes, ?array &$requestedScopes = null): array
-    {
-        $requestedScopes = empty(trim($scopes)) ? null : array_filter(explode(' ', $scopes));
-        return $this->config->getScopePolicy()->getScopes($client, $requestedScopes);
+    public static function scopeStringToArray(?string $scopes) {
+        return empty(trim($scopes)) ? null : array_filter(explode(' ', $scopes));
     }
 
     /**
      * @param ClientInterface $client
-     * @param array           $scopes
+     * @param null|string $scopes
+     * @param array|null $requestedScopes
+     * @return array|null
      * @throws OAuthException
+     */
+    public function getScopes(ClientInterface $client, ?string $scopes, ?array &$requestedScopes = null): array
+    {
+        /**
+         * @see https://tools.ietf.org/html/rfc6749#section-3.3
+         * The value of the scope parameter is expressed as a list of space-
+         * delimited, case-sensitive strings.  The strings are defined by the
+         * authorization server.  If the value contains multiple space-delimited
+         * strings, their order does not matter, and each string adds an
+         * additional access range to the requested scope.
+         *
+         * scope       = scope-token *( SP scope-token )
+         * scope-token = 1*( %x21 / %x23-5B / %x5D-7E )
+         */
+        $requestedScopes = self::scopeStringToArray($scopes);
+        $scopes = $this->config->getScopePolicy()->getScopes($client, $requestedScopes);
+
+        if (empty($scopes)) {
+            throw new OAuthException('invalid_scope',
+                'The request scope is unknown.',
+                'https://tools.ietf.org/html/rfc6749#section-4.1');
+        }
+
+        $supportedScopes = $client->getMetadata()->getScopes();
+        if (!empty($supportedScopes)) {
+            if (!empty(array_diff($scopes, $supportedScopes))) {
+                throw new OAuthException('invalid_scope',
+                    'The request scope is invalid. Supported scopes : ' . implode(', ', $supportedScopes),
+                    'https://tools.ietf.org/html/rfc6749#section-4.1');
+            }
+        }
+
+        return $scopes;
+    }
+
+    /**
+     * @param ClientInterface $client
+     * @param array $scopes
+     * @throws OAuthException
+     * @deprecated
      */
     public function verifyScopes(ClientInterface $client, array $scopes): void
     {

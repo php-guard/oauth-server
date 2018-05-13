@@ -17,7 +17,7 @@ class Config
     /**
      * @var array
      */
-    protected $defaultScopes = [];
+//    protected $defaultScopes = [];
 
     /**
      * @var ScopePolicyInterface
@@ -26,30 +26,29 @@ class Config
     /**
      * @var DefaultScopePolicy
      */
-    private $defaultScopePolicy;
+//    private $defaultScopePolicy;
 
-    public function __construct()
+    public function __construct(ScopePolicyInterface $scopePolicy)
     {
-        $this->defaultScopePolicy = new DefaultScopePolicy();
-        $this->scopePolicy = $this->defaultScopePolicy;
+        $this->scopePolicy = $scopePolicy;
     }
 
     /**
      * @return array
      */
-    public function getDefaultScopes(): array
-    {
-        return $this->defaultScopes;
-    }
+//    public function getDefaultScopes(): array
+//    {
+//        return $this->defaultScopes;
+//    }
 
     /**
      * @param array $defaultScopes
      */
-    public function setDefaultScopes(array $defaultScopes): void
-    {
-        $this->defaultScopes = $defaultScopes;
-        $this->defaultScopePolicy->setScopes($defaultScopes);
-    }
+//    public function setDefaultScopes(array $defaultScopes): void
+//    {
+//        $this->defaultScopes = $defaultScopes;
+//        $this->defaultScopePolicy->setScopes($defaultScopes);
+//    }
 
     /**
      * @return ScopePolicyInterface

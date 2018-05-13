@@ -6,7 +6,7 @@
  * Time: 23:43
  */
 
-namespace OAuth2\Extensions\PKCE\Flows;
+namespace OAuth2\Extensions\PKCE\AuthorizationGrantTypes\Flows;
 
 
 use OAuth2\Endpoints\AuthorizationEndpoint;
@@ -15,7 +15,7 @@ use OAuth2\Exceptions\OAuthException;
 use OAuth2\Extensions\PKCE\Credentials\CodeChallenge;
 use OAuth2\Extensions\PKCE\Storages\AuthorizationCodeStorageInterface;
 use OAuth2\Helper;
-use OAuth2\Roles\Clients\PublicClient;
+use OAuth2\Roles\ClientTypes\PublicClient;
 use OAuth2\Storages\AccessTokenStorageInterface;
 use OAuth2\Storages\RefreshTokenStorageInterface;
 
@@ -24,7 +24,7 @@ use OAuth2\Storages\RefreshTokenStorageInterface;
  * @package OAuth2\Extensions\PKCE\Flows
  * rfc https://tools.ietf.org/html/rfc7636
  */
-class AuthorizationCodeFlow extends \OAuth2\Flows\AuthorizationCodeFlow
+class AuthorizationCodeFlow extends \OAuth2\AuthorizationGrantTypes\Flows\AuthorizationCodeFlow
 {
     /**
      * @var AuthorizationCodeStorageInterface
@@ -33,12 +33,12 @@ class AuthorizationCodeFlow extends \OAuth2\Flows\AuthorizationCodeFlow
 
     /**
      * AuthorizationCodeFlow constructor.
-     * @param \OAuth2\Flows\AuthorizationCodeFlow $authorizationCodeFlow
+     * @param \OAuth2\GrantFlows\AuthorizationCodeFlow $authorizationCodeFlow
      * @param AuthorizationCodeStorageInterface   $authorizationCodeStorage
      * @param AccessTokenStorageInterface         $accessTokenStorage
      * @param RefreshTokenStorageInterface        $refreshTokenStorage
      */
-    public function __construct(\OAuth2\Flows\AuthorizationCodeFlow $authorizationCodeFlow,
+    public function __construct(\OAuth2\GrantFlows\AuthorizationCodeFlow $authorizationCodeFlow,
                                 AuthorizationCodeStorageInterface $authorizationCodeStorage,
                                 AccessTokenStorageInterface $accessTokenStorage,
                                 RefreshTokenStorageInterface $refreshTokenStorage)
@@ -111,7 +111,7 @@ class AuthorizationCodeFlow extends \OAuth2\Flows\AuthorizationCodeFlow
         /**
          * verify that the authorization code is valid
          */
-        if ($authorizationCode->isExpired()) {
+        if ($this->authorizationCodeStorage->hasExpired($authorizationCode)) {
             throw new OAuthException('invalid_grant',
                 'The request includes the invalid parameter code. The code has expired.',
                 'https://tools.ietf.org/html/rfc7636#section-4.4');
@@ -173,7 +173,7 @@ class AuthorizationCodeFlow extends \OAuth2\Flows\AuthorizationCodeFlow
             }
         }
 
-        return $this->issueTokens($authorizationCode->getScope(),
+        return $this->issueTokens($authorizationCode->getScopes(),
             $authorizationCode->getResourceOwnerIdentifier(), $authorizationCode->getCode());
     }
 

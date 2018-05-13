@@ -15,7 +15,7 @@ interface ScopePolicyInterface
 {
     /**
      * @param ClientInterface $client
-     * @param string|null     $scope
+     * @param array|null $scopes
      * @return array|null
      */
     function getScopes(ClientInterface $client, ?array $scopes): array;

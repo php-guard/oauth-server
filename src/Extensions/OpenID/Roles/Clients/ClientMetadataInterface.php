@@ -13,7 +13,7 @@ namespace OAuth2\Extensions\OpenID\Roles\Clients;
  * @package OAuth2\Extensions\OpenID\Roles\Clients
  * rfc http://openid.net/specs/openid-connect-registration-1_0.html
  */
-interface ClientMetadataInterface extends \OAuth2\Roles\Clients\ClientMetadataInterface
+interface ClientMetadataInterface extends \OAuth2\Roles\ClientTypes\ClientMetadataInterface
 {
     /**
      * @return null|string

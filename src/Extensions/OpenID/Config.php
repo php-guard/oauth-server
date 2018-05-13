@@ -9,6 +9,8 @@
 namespace OAuth2\Extensions\OpenID;
 
 
+use OAuth2\ScopePolicy\Policies\ScopePolicyInterface;
+
 class Config extends \OAuth2\Config
 {
     /**
@@ -21,9 +23,9 @@ class Config extends \OAuth2\Config
      */
     protected $idTokenLifetime = 1800;
 
-    public function __construct(string $issuerIdentifier)
+    public function __construct(ScopePolicyInterface $scopePolicy, string $issuerIdentifier)
     {
-        parent::__construct();
+        parent::__construct($scopePolicy);
         $this->issuerIdentifier = $issuerIdentifier;
     }
 

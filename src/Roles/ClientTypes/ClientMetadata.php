@@ -6,7 +6,7 @@
  * Time: 23:37
  */
 
-namespace OAuth2\Roles\Clients;
+namespace OAuth2\Roles\ClientTypes;
 
 class ClientMetadata implements ClientMetadataInterface
 {
@@ -46,9 +46,9 @@ class ClientMetadata implements ClientMetadataInterface
     protected $logoUri;
 
     /**
-     * @var string|null
+     * @var string[]|null
      */
-    protected $scope;
+    protected $scopes;
 
     /**
      * @var array|null
@@ -198,19 +198,19 @@ class ClientMetadata implements ClientMetadataInterface
     }
 
     /**
-     * @return null|string
+     * @return null|string[]
      */
-    public function getScope(): ?string
+    public function getScopes(): ?array
     {
-        return $this->scope;
+        return $this->scopes;
     }
 
     /**
-     * @param null|string $scope
+     * @param null|string[] $scopes
      */
-    public function setScope(?string $scope): void
+    public function setScopes(?array $scopes): void
     {
-        $this->scope = $scope;
+        $this->scopes = $scopes;
     }
 
     /**

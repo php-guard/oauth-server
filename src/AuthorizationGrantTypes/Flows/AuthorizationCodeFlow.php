@@ -6,20 +6,43 @@
  * Time: 18:08
  */
 
-namespace OAuth2\Flows;
+namespace OAuth2\AuthorizationGrantTypes\Flows;
 
 
 use OAuth2\Credentials\AuthorizationCode;
 use OAuth2\Endpoints\AuthorizationEndpoint;
 use OAuth2\Endpoints\TokenEndpoint;
 use OAuth2\Exceptions\OAuthException;
-use OAuth2\GrantTypes\AbstractGrantType;
-use OAuth2\Roles\Clients\RegisteredClient;
+use OAuth2\AuthorizationGrantTypes\AbstractGrantType;
+use OAuth2\Helper;
 use OAuth2\Storages\AccessTokenStorageInterface;
 use OAuth2\Storages\AuthorizationCodeStorageInterface;
 use OAuth2\Storages\RefreshTokenStorageInterface;
-use Symfony\Component\VarDumper\VarDumper;
 
+/**
+ * Class AuthorizationCodeFlow
+ * @package OAuth2\AuthorizationGrantTypes\Flows
+ *
+ * @see https://tools.ietf.org/html/rfc6749#section-1.3.1
+ * The authorization code is obtained by using an authorization server
+ * as an intermediary between the client and resource owner.  Instead of
+ * requesting authorization directly from the resource owner, the client
+ * directs the resource owner to an authorization server (via its
+ * user-agent as defined in [RFC2616]), which in turn directs the
+ * resource owner back to the client with the authorization code.
+ *
+ * Before directing the resource owner back to the client with the
+ * authorization code, the authorization server authenticates the
+ * resource owner and obtains authorization.  Because the resource owner
+ * only authenticates with the authorization server, the resource
+ * owner's credentials are never shared with the client.
+ *
+ * The authorization code provides a few important security benefits,
+ * such as the ability to authenticate the client, as well as the
+ * transmission of the access token directly to the client without
+ * passing it through the resource owner's user-agent and potentially
+ * exposing it to others, including the resource owner.
+ */
 class AuthorizationCodeFlow extends AbstractGrantType implements FlowInterface
 {
     protected $authorizationCodeStorage;
@@ -137,8 +160,14 @@ class AuthorizationCodeFlow extends AbstractGrantType implements FlowInterface
             $this->authorizationCode->getResourceOwnerIdentifier(),
             $this->authorizationCode->getCode());
 
-        if(is_null($this->authorizationCode->getRequestedScopes()) ||
-            array_diff($this->authorizationCode->getRequestedScopes(), $this->authorizationCode->getScopes())) {
+        /**
+         * @see https://tools.ietf.org/html/rfc6749#section-3.3
+         * The authorization and token endpoints allow the client to specify the
+         * scope of the access request using the "scope" request parameter.  In
+         * turn, the authorization server uses the "scope" response parameter to
+         * inform the client of the scope of the access token issued.
+         */
+        if(Helper::array_equals($this->authorizationCode->getRequestedScopes(), $this->authorizationCode->getScopes())) {
             $responseData['scope'] = implode(' ', $this->authorizationCode->getScopes());
         }
 

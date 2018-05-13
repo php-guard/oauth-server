@@ -6,7 +6,7 @@
  * Time: 13:36
  */
 
-namespace OAuth2\Roles\Clients;
+namespace OAuth2\Roles\ClientTypes;
 
 use OAuth2\Roles\ClientInterface;
 
@@ -15,11 +15,8 @@ use OAuth2\Roles\ClientInterface;
  * Class RegisteredClient
  * @package        OAuth2\Roles\Clients
  *
- * @see            https://tools.ietf.org/html/rfc6749#section-2
- *
- * Client Registration
- *
- *     Before initiating the protocol, the client registers with the
+ * @see https://tools.ietf.org/html/rfc6749#section-2
+ * Before initiating the protocol, the client registers with the
  * authorization server.  The means through which the client registers
  * with the authorization server are beyond the scope of this
  * specification but typically involve end-user interaction with an HTML
@@ -41,9 +38,6 @@ use OAuth2\Roles\ClientInterface;
  * o  include any other information required by the authorization server
  * (e.g., application name, website, description, logo image, the
  * acceptance of legal terms).
- *
- * @implementation If registration require additional information,
- * you should override this class and all of his children to add your own properties
  */
 abstract class RegisteredClient implements ClientInterface
 {
@@ -51,10 +45,7 @@ abstract class RegisteredClient implements ClientInterface
      * @var string
      *
      * @see https://tools.ietf.org/html/rfc6749#section-2.2
-     *
-     * Client Identifier
-     *
-     *     The authorization server issues the registered client a client
+     * The authorization server issues the registered client a client
      * identifier -- a unique string representing the registration
      * information provided by the client.  The client identifier is not a
      * secret; it is exposed to the resource owner and MUST NOT be used

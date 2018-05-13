@@ -6,18 +6,34 @@
  * Time: 15:41
  */
 
-namespace OAuth2\Flows;
+namespace OAuth2\AuthorizationGrantTypes\Flows;
 
 
 use OAuth2\Endpoints\AuthorizationEndpoint;
 use OAuth2\Endpoints\TokenEndpoint;
 use OAuth2\Exceptions\OAuthException;
-use OAuth2\GrantTypes\AbstractGrantType;
-use OAuth2\Roles\Clients\ConfidentialClientInterface;
+use OAuth2\AuthorizationGrantTypes\AbstractGrantType;
+use OAuth2\Helper;
+use OAuth2\Roles\ClientTypes\ConfidentialClientInterface;
 use OAuth2\ScopePolicy\ScopePolicyManager;
 use OAuth2\Storages\AccessTokenStorageInterface;
 use OAuth2\Storages\RefreshTokenStorageInterface;
 
+/**
+ * Class ClientCredentialsFlow
+ * @package OAuth2\AuthorizationGrantTypes\Flows
+ *
+ * @see https://tools.ietf.org/html/rfc6749#section-1.3.4
+ * The client credentials (or other forms of client authentication) can
+ * be used as an authorization grant when the authorization scope is
+ * limited to the protected resources under the control of the client,
+ * or to protected resources previously arranged with the authorization
+ * server.  Client credentials are used as an authorization grant
+ * typically when the client is acting on its own behalf (the client is
+ * also the resource owner) or is requesting access to protected
+ * resources based on an authorization previously arranged with the
+ * authorization server.
+ */
 class ClientCredentialsFlow extends AbstractGrantType implements FlowInterface
 {
     /**
@@ -59,10 +75,17 @@ class ClientCredentialsFlow extends AbstractGrantType implements FlowInterface
         }
 
         $scopes = $this->scopePolicyManager->getScopes($tokenEndpoint->getClient(), $requestData['scope'] ?? null, $requestedScopes);
-        $this->scopePolicyManager->verifyScopes($tokenEndpoint->getClient(), $scopes);
 
         $responseData = $this->issueAccessToken($scopes, $tokenEndpoint->getClient()->getIdentifier(), null);
-        if(is_null($requestedScopes) || array_diff($requestedScopes, $scopes)) {
+
+        /**
+         * @see https://tools.ietf.org/html/rfc6749#section-3.3
+         * The authorization and token endpoints allow the client to specify the
+         * scope of the access request using the "scope" request parameter.  In
+         * turn, the authorization server uses the "scope" response parameter to
+         * inform the client of the scope of the access token issued.
+         */
+        if(Helper::array_equals($requestedScopes, $scopes)) {
             $responseData['scope'] = implode(' ', $scopes);
         }
 

@@ -9,6 +9,11 @@
 namespace OAuth2\Extensions\OpenID\Credentials;
 
 
+/**
+ * Interface AuthorizationCodeInterface
+ * @package OAuth2\Extensions\OpenID\Credentials
+ * @deprecated
+ */
 interface AuthorizationCodeInterface extends \OAuth2\Credentials\AuthorizationCodeInterface
 {
     function getIdToken(): ?string;

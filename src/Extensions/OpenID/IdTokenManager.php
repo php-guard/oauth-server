@@ -21,7 +21,7 @@ use OAuth2\Helper;
 use OAuth2\IdToken;
 use OAuth2\IdTokenInterface;
 use OAuth2\Roles\ClientInterface;
-use OAuth2\Roles\Clients\RegisteredClient;
+use OAuth2\Roles\ClientTypes\RegisteredClient;
 
 
 class IdTokenManager

@@ -18,6 +18,6 @@ use OAuth2\Credentials\AuthorizationCodeInterface;
  */
 interface AuthorizationCodeStorageInterface extends \OAuth2\Storages\AuthorizationCodeStorageInterface
 {
-    function generate(string $scope, string $clientIdentifier, string $resourceOwnerIdentifier,
-                    ?string $requestedScope, ?string $redirectUri, ?string $idToken = null): AuthorizationCodeInterface;
+    function generate(array $scopes, string $clientIdentifier, string $resourceOwnerIdentifier,
+                    ?array $requestedScopes, ?string $redirectUri, ?string $idToken = null): AuthorizationCodeInterface;
 }

@@ -13,11 +13,8 @@ namespace OAuth2\Roles;
  * Interface ResourceServerInterface
  * @package OAuth2\Roles
  *
- * @see     https://tools.ietf.org/html/rfc6749#section-1.1
- *
- * Roles
- *
- *     The server hosting the protected resources, capable of accepting
+ * @see https://tools.ietf.org/html/rfc6749#section-1.1
+ * The server hosting the protected resources, capable of accepting
  * and responding to protected resource requests using access tokens.
  */
 interface ResourceServerInterface

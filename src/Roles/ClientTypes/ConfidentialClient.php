@@ -6,20 +6,11 @@
  * Time: 13:37
  */
 
-namespace OAuth2\Roles\Clients;
+namespace OAuth2\Roles\ClientTypes;
 
 /**
  * Class ClientPasswordType
  * @package OAuth2\Roles\Clients\Types
- *
- * @see     https://tools.ietf.org/html/rfc6749#section-2.1
- *
- * Client Types
- *
- *     Clients capable of maintaining the confidentiality of their
- * credentials (e.g., client implemented on a secure server with
- * restricted access to the client credentials), or capable of secure
- * client authentication using other means.
  */
 abstract class ConfidentialClient extends RegisteredClient implements ConfidentialClientInterface
 {

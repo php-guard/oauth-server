@@ -6,18 +6,17 @@
  * Time: 13:38
  */
 
-namespace OAuth2\Roles\Clients;
+namespace OAuth2\Roles\ClientProfiles;
+
+use OAuth2\Roles\ClientTypes\PublicClient;
 
 
 /**
  * Class NativeApplicationClient
  * @package OAuth2\Roles\Clients
  *
- * @see     https://tools.ietf.org/html/rfc6749#section-2.1
- *
- * Client Types
- *
- *     A native application is a public client installed and executed on
+ * @see https://tools.ietf.org/html/rfc6749#section-2.1
+ * A native application is a public client installed and executed on
  * the device used by the resource owner.  Protocol data and
  * credentials are accessible to the resource owner.  It is assumed
  * that any client authentication credentials included in the

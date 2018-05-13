@@ -17,4 +17,8 @@ interface AuthorizationCodeStorageInterface extends \OAuth2\Storages\Authorizati
     function getCodeChallenge(AuthorizationCodeInterface $authorizationCode): ?CodeChallengeInterface;
 
     function associate(CodeChallengeInterface $codeChallenge, AuthorizationCodeInterface $authorizationCode);
+
+
+    public function generate(array $scopes, string $clientIdentifier, string $resourceOwnerIdentifier,
+                             ?array $requestedScopes, ?string $redirectUri): AuthorizationCodeInterface;
 }

@@ -10,7 +10,7 @@ namespace OAuth2\Storages;
 
 
 use OAuth2\Roles\ClientInterface;
-use OAuth2\Roles\Clients\RegisteredClient;
+use OAuth2\Roles\ClientTypes\RegisteredClient;
 
 interface ClientStorageInterface
 {

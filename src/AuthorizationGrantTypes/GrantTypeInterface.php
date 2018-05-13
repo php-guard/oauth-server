@@ -6,7 +6,7 @@
  * Time: 22:20
  */
 
-namespace OAuth2\GrantTypes;
+namespace OAuth2\AuthorizationGrantTypes;
 
 
 use OAuth2\Endpoints\TokenEndpoint;

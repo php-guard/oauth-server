@@ -9,8 +9,6 @@
 namespace OAuth2\Storages;
 
 
-use OAuth2\Roles\ResourceOwnerInterface;
-
 interface ResourceOwnerStorageInterface
 {
     function validateCredentials(string $username, string $password): ?string;

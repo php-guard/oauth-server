@@ -18,7 +18,7 @@ class AuthorizationCode extends \OAuth2\Credentials\AuthorizationCode implements
     protected $idToken;
 
     public function __construct(string $code, string $scope, string $clientIdentifier, string $resourceOwnerIdentifier,
-                                int $expiresAt, ?string $requestedScope = null, ?string $redirectUri = null,
+                                \DateTimeInterface $expiresAt, ?string $requestedScope = null, ?string $redirectUri = null,
                                 ?string $idToken = null)
     {
         parent::__construct($code, $scope, $clientIdentifier, $resourceOwnerIdentifier,

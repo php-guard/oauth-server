@@ -9,7 +9,7 @@
 namespace OAuth2\Extensions\PKCE\Credentials;
 
 
-class AuthorizationCode extends \OAuth2\Credentials\AuthorizationCode
+class AuthorizationCode extends \OAuth2\Credentials\AuthorizationCode implements AuthorizationCodeInterface
 {
     /**
      * @var string|null
@@ -20,11 +20,11 @@ class AuthorizationCode extends \OAuth2\Credentials\AuthorizationCode
      */
     protected $codeChallengeMethod;
 
-    public function __construct(string $code, string $scope, string $clientIdentifier, string $resourceOwnerIdentifier,
-                                int $expiresAt, ?string $requestedScope = null, ?string $redirectUri = null,
+    public function __construct(string $code, array $scopes, string $clientIdentifier, string $resourceOwnerIdentifier,
+                                \DateTimeInterface $expiresAt, ?array $requestedScopes = null, ?string $redirectUri = null,
                                 ?string $codeChallenge = null, ?string $codeChallengeMethod = null)
     {
-       parent::__construct($code, $scope, $clientIdentifier, $resourceOwnerIdentifier, $expiresAt, $requestedScope, $redirectUri);
+       parent::__construct($code, $scopes, $clientIdentifier, $resourceOwnerIdentifier, $expiresAt, $requestedScopes, $redirectUri);
         $this->codeChallenge = $codeChallenge;
         $this->codeChallengeMethod = $codeChallengeMethod;
     }

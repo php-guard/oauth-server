@@ -9,7 +9,7 @@
 namespace OAuth2\Extensions\OpenID\Roles\Clients;
 
 
-class ClientMetadata extends \OAuth2\Roles\Clients\ClientMetadata implements ClientMetadataInterface
+class ClientMetadata extends \OAuth2\Roles\ClientTypes\ClientMetadata implements ClientMetadataInterface
 {
     /**
      * @var string|null

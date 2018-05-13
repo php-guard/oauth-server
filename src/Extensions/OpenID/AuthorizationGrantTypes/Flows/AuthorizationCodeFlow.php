@@ -6,7 +6,7 @@
  * Time: 17:40
  */
 
-namespace OAuth2\Extensions\OpenID\Flows;
+namespace OAuth2\Extensions\OpenID\AuthorizationGrantTypes\Flows;
 
 
 use OAuth2\Endpoints\AuthorizationEndpoint;
@@ -19,7 +19,7 @@ use OAuth2\Storages\ClientStorageInterface;
 use OAuth2\Storages\RefreshTokenStorageInterface;
 use OAuth2\Storages\ResourceOwnerStorageInterface;
 
-class AuthorizationCodeFlow extends \OAuth2\Flows\AuthorizationCodeFlow
+class AuthorizationCodeFlow extends \OAuth2\AuthorizationGrantTypes\Flows\AuthorizationCodeFlow
 {
     /**
      * @var IdTokenManager

@@ -12,6 +12,15 @@ namespace OAuth2\Roles;
 use OAuth2\Endpoints\AuthorizationEndpoint;
 use Psr\Http\Message\ResponseInterface;
 
+/**
+ * Interface ResourceOwnerInterface
+ * @package OAuth2\Roles
+ *
+ * @see https://tools.ietf.org/html/rfc6749#section-1.1
+ * An entity capable of granting access to a protected resource.
+ * When the resource owner is a person, it is referred to as an
+ * end-user.
+ */
 interface ResourceOwnerInterface
 {
     function getIdentifier(): string;

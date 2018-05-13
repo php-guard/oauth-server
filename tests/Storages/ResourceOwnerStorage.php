@@ -9,23 +9,21 @@
 namespace OAuth2\Tests\Storages;
 
 
-use OAuth2\Roles\ResourceOwnerInterface;
 use OAuth2\Storages\ResourceOwnerStorageInterface;
-use OAuth2\Tests\Roles\ResourceOwner;
 
 class ResourceOwnerStorage implements ResourceOwnerStorageInterface
 {
-    public function validateCredentials(string $username, string $password): ?ResourceOwnerInterface
+    public function validateCredentials(string $username, string $password): ?string
     {
-        return $username == 'phpunit' && $password == 'password' ? new ResourceOwner() : null;
+        return $username == 'phpunit' && $password == 'password' ? $username : null;
     }
 
     /**
      * @param string $identifier
-     * @return null|ResourceOwnerInterface
+     * @return bool
      */
-    function get(string $identifier): ?ResourceOwnerInterface
+    function exists(string $identifier): bool
     {
-        return $identifier == 'phpunit' ? new ResourceOwner() : null;
+        return $identifier == 'phpunit';
     }
 }

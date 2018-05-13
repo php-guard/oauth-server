@@ -12,13 +12,45 @@ namespace OAuth2\Endpoints;
 use GuzzleHttp\Psr7\Response;
 use OAuth2\ClientAuthentication\ClientAuthenticationMethodManager;
 use OAuth2\Exceptions\OAuthException;
-use OAuth2\GrantTypes\GrantTypeInterface;
-use OAuth2\GrantTypes\GrantTypeManager;
-use OAuth2\Roles\Clients\RegisteredClient;
+use OAuth2\AuthorizationGrantTypes\GrantTypeInterface;
+use OAuth2\AuthorizationGrantTypes\GrantTypeManager;
+use OAuth2\Roles\ClientTypes\RegisteredClient;
 use OAuth2\Storages\ClientStorageInterface;
 use Psr\Http\Message\ResponseInterface;
 use Psr\Http\Message\ServerRequestInterface;
 
+/**
+ * Class TokenEndpoint
+ * @package OAuth2\Endpoints
+ *
+ * @see https://tools.ietf.org/html/rfc6749#section-3.2
+ * The token endpoint is used by the client to obtain an access token by
+ * presenting its authorization grant or refresh token.  The token
+ * endpoint is used with every authorization grant except for the
+ * implicit grant type (since an access token is issued directly).
+ *
+ * The means through which the client obtains the location of the token
+ * endpoint are beyond the scope of this specification, but the location
+ * is typically provided in the service documentation.
+ *
+ * The endpoint URI MAY include an "application/x-www-form-urlencoded"
+ * formatted (per Appendix B) query component ([RFC3986] Section 3.4),
+ * which MUST be retained when adding additional query parameters.  The
+ * endpoint URI MUST NOT include a fragment component.
+ *
+ * Since requests to the token endpoint result in the transmission of
+ * clear-text credentials (in the HTTP request and response), the
+ * authorization server MUST require the use of TLS as described in
+ * Section 1.6 when sending requests to the token endpoint.
+ *
+ * The client MUST use the HTTP "POST" method when making access token
+ * requests.
+ *
+ * Parameters sent without a value MUST be treated as if they were
+ * omitted from the request.  The authorization server MUST ignore
+ * unrecognized request parameters.  Request and response parameters
+ * MUST NOT be included more than once.
+ */
 class TokenEndpoint implements EndpointInterface
 {
 
@@ -92,7 +124,7 @@ class TokenEndpoint implements EndpointInterface
 
     /**
      * @param ServerRequestInterface $request
-     * @param array                  $requestData
+     * @param array $requestData
      * @throws OAuthException
      */
     protected function verifyRequestData(ServerRequestInterface $request, array $requestData)
@@ -123,21 +155,12 @@ class TokenEndpoint implements EndpointInterface
 
     /**
      * @param ServerRequestInterface $request
-     * @param array                  $requestData
+     * @param array $requestData
      * @throws OAuthException
      */
     protected function verifyClient(ServerRequestInterface $request, array $requestData)
     {
-        // TODO authenticate if client is confidential
-        // http://openid.net/specs/openid-connect-core-1_0.html#ClientAuthentication
-
-        /**
-         * require client authentication for confidential clients or for any
-         * client that was issued client credentials (or with other
-         * authentication requirements)
-         */
         $this->client = $this->clientAuthenticationMethodManager->authenticate($request, $requestData);
-
         $this->getGrantType();
     }
 

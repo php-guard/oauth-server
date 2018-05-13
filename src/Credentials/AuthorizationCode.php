@@ -39,8 +39,8 @@ class AuthorizationCode implements AuthorizationCodeInterface
      */
     protected $expiresAt;
 
-    public function __construct(string $code, string $scopes, string $clientIdentifier, string $resourceOwnerIdentifier,
-                                int $expiresAt, ?array $requestedScopes = null, ?string $redirectUri = null)
+    public function __construct(string $code, array $scopes, string $clientIdentifier, string $resourceOwnerIdentifier,
+                                \DateTimeInterface $expiresAt, ?array $requestedScopes = null, ?string $redirectUri = null)
     {
         $this->code = $code;
         $this->scopes = $scopes;

@@ -6,10 +6,10 @@
  * Time: 18:57
  */
 
-namespace OAuth2\Flows;
+namespace OAuth2\AuthorizationGrantTypes\Flows;
 
 
-use OAuth2\GrantTypes\GrantTypeManager;
+use OAuth2\AuthorizationGrantTypes\GrantTypeManager;
 use OAuth2\ResponseTypes\ResponseTypeManager;
 
 class FlowManager

@@ -6,12 +6,13 @@
  * Time: 14:36
  */
 
-namespace OAuth2\GrantTypes;
+namespace OAuth2\AuthorizationGrantTypes;
 
 
 use OAuth2\Endpoints\TokenEndpoint;
 use OAuth2\Exceptions\OAuthException;
-use Symfony\Component\VarDumper\VarDumper;
+use OAuth2\Helper;
+use OAuth2\ScopePolicy\ScopePolicyManager;
 
 class RefreshTokenGrantType extends AbstractGrantType implements GrantTypeInterface
 {
@@ -47,7 +48,7 @@ class RefreshTokenGrantType extends AbstractGrantType implements GrantTypeInterf
         }
 
         $scopes = $refreshToken->getScopes();
-        $requestedScopes = empty(trim($requestData['scope'])) ? null : array_filter(explode(' ', $requestData['scope']));
+        $requestedScopes = ScopePolicyManager::scopeStringToArray($requestData['scope'] ?? null);
 
         if (!empty($requestedScopes)) {
             if (!empty(array_diff($requestedScopes, $refreshToken->getScopes()))) {
@@ -60,10 +61,20 @@ class RefreshTokenGrantType extends AbstractGrantType implements GrantTypeInterf
 
         // TODO Config issueTokens or only accessToken
 
-        $responseData = $this->issueTokens($scopes, $refreshToken->getClientIdentifier(), $refreshToken->getResourceOwnerIdentifier());
+        $responseData = $this->issueTokens(
+            $scopes,
+            $refreshToken->getClientIdentifier(),
+            $refreshToken->getResourceOwnerIdentifier()
+        );
 
-        if(is_null($requestedScopes) ||
-            array_diff($requestedScopes, $scopes)) {
+        /**
+         * @see https://tools.ietf.org/html/rfc6749#section-3.3
+         * The authorization and token endpoints allow the client to specify the
+         * scope of the access request using the "scope" request parameter.  In
+         * turn, the authorization server uses the "scope" response parameter to
+         * inform the client of the scope of the access token issued.
+         */
+        if (Helper::array_equals($requestedScopes, $scopes)) {
             $responseData['scope'] = implode(' ', $scopes);
         }
 

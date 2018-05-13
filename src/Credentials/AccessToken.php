@@ -9,6 +9,10 @@
 namespace OAuth2\Credentials;
 
 
+/**
+ * Class AccessToken
+ * @package OAuth2\Credentials
+ */
 class AccessToken extends Token implements AccessTokenInterface
 {
     /**

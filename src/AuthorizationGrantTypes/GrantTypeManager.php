@@ -6,7 +6,7 @@
  * Time: 09:53
  */
 
-namespace OAuth2\GrantTypes;
+namespace OAuth2\AuthorizationGrantTypes;
 
 
 class GrantTypeManager

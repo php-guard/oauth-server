@@ -6,7 +6,7 @@
  * Time: 22:13
  */
 
-namespace OAuth2\Extensions\OpenID\Flows;
+namespace OAuth2\Extensions\OpenID\AuthorizationGrantTypes\Flows;
 
 
 use OAuth2\Endpoints\AuthorizationEndpoint;
@@ -14,8 +14,8 @@ use OAuth2\Endpoints\TokenEndpoint;
 use OAuth2\Exceptions\OAuthException;
 use OAuth2\Extensions\OpenID\IdTokenManager;
 use OAuth2\Extensions\OpenID\Roles\Clients\ClientMetadataInterface;
-use OAuth2\Flows\FlowInterface;
-use OAuth2\GrantTypes\AbstractGrantType;
+use OAuth2\AuthorizationGrantTypes\Flows\FlowInterface;
+use OAuth2\AuthorizationGrantTypes\AbstractGrantType;
 use OAuth2\Helper;
 use OAuth2\Storages\AccessTokenStorageInterface;
 use OAuth2\Storages\RefreshTokenStorageInterface;
@@ -105,7 +105,7 @@ class ImplicitFlow extends AbstractGrantType implements FlowInterface
         }
 
         $accessToken = $this->issueAccessToken(
-            implode(' ', $authorizationEndpoint->getScopes()),
+            $authorizationEndpoint->getScopes(),
             $authorizationEndpoint->getClient()->getIdentifier(),
             $authorizationEndpoint->getResourceOwner()->getIdentifier()
         );
@@ -129,8 +129,8 @@ class ImplicitFlow extends AbstractGrantType implements FlowInterface
         $atHash = Helper::base64url_encode($atHash);
         $idToken['at_hash'] = $atHash;
 
-        $result = $this->idTokenManager->issueIdToken($authorizationEndpoint->getClient(), $authorizationEndpoint->getResourceOwner());
-        $result = array_merge($result, $accessToken);
+        $result['id_token'] = $this->idTokenManager->issueIdToken($authorizationEndpoint->getClient(), $authorizationEndpoint->getResourceOwner());
+//        $result = array_merge($result, $accessToken);
         return $result;
     }
 

@@ -93,4 +93,13 @@ abstract class Helper
         }
         return base64_decode($data);
     }
+
+    public static function array_equals($a, $b) {
+        return (
+            is_array($a)
+            && is_array($b)
+            && count($a) == count($b)
+            && array_diff($a, $b) === array_diff($b, $a)
+        );
+    }
 }
