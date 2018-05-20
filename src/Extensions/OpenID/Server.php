@@ -9,7 +9,6 @@
 namespace OAuth2\Extensions\OpenID;
 
 
-use Firebase\JWT\JWT;
 use OAuth2\Extensions\OpenID\Endpoints\AuthorizationEndpoint;
 use OAuth2\Extensions\OpenID\AuthorizationGrantTypes\Flows\AuthorizationCodeFlow;
 use OAuth2\Extensions\OpenID\AuthorizationGrantTypes\Flows\HybridFlow;
@@ -25,7 +24,7 @@ class Server extends \OAuth2\Server
     {
         parent::__construct($config, $storageManager, $resourceOwner);
 
-        $this->idTokenManager = new IdTokenManager($config, new JWT());
+        $this->idTokenManager = new IdTokenManager($config);
 
         $this->flowManager->addFlow(new AuthorizationCodeFlow(
             $storageManager->getAuthorizationCodeStorage(),

@@ -9,10 +9,10 @@
 namespace OAuth2\Tests\Endpoints;
 
 
-use OAuth2\Extensions\OpenID\Config;
-use OAuth2\Extensions\OpenID\Storages\StorageManager;
+use OAuth2\Config;
+use OAuth2\Storages\StorageManager;
 use OAuth2\Roles\ClientProfiles\WebApplicationClient;
-use OAuth2\Extensions\OpenID\Server;
+use OAuth2\Server;
 use OAuth2\ScopePolicy\Policies\DefaultScopePolicy;
 use OAuth2\Tests\Roles\ResourceOwner;
 use OAuth2\Tests\Storages\AccessTokenStorage;
@@ -41,7 +41,7 @@ abstract class Endpoint extends TestCase
         $clientStorage = new ClientStorage();
         $resourceOwnerStorage = new ResourceOwnerStorage();
         $scopePolicy = new DefaultScopePolicy(['email']);
-        $this->config = new Config($scopePolicy, 'phpunit@oauth-server.com');
+        $this->config = new Config($scopePolicy); //'phpunit@oauth-server.com'
         $this->storageManager = new StorageManager(
             $clientStorage,
             $resourceOwnerStorage,

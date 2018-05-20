@@ -8,12 +8,8 @@
 
 namespace OAuth2\Extensions\OpenID;
 
-
-use Firebase\JWT\JWT;
-use Jose\Factory\JWKFactory;
-use Jose\Factory\JWSFactory;
-use Jose\Object\JWKSet;
-use Jose\Signer;
+use Jose\Component\Core\JWKSet;
+use Jose\Component\KeyManagement\JWKFactory;
 use OAuth2\Credentials\AccessTokenInterface;
 use OAuth2\Extensions\OpenID\Credentials\AuthorizationCodeInterface;
 use OAuth2\Extensions\OpenID\Roles\Clients\ClientMetadataInterface;
@@ -29,17 +25,12 @@ class IdTokenManager
     const KEY = 'AZE'; // Keys storage ? manager ?
 
     /**
-     * @var JWT
-     */
-    private $jwt;
-    /**
      * @var Config
      */
     private $config;
 
-    public function __construct(Config $config, JWT $jwt)
+    public function __construct(Config $config)
     {
-        $this->jwt = $jwt;
         $this->config = $config;
     }
 
@@ -69,26 +60,27 @@ class IdTokenManager
             $alg = $metadata->getIdTokenSignedResponseAlg() ?: 'RS256';
         }
 
-        $jwkSet = new JWKSet();
+        $keys=[];
         $jwks = $metadata->getJwks();
 
         if (!empty($jwks)) {
             $jwks = JWKFactory::createFromValues($jwks);
             if ($jwks instanceof JWKSet) {
-                foreach ($jwks->getKeys() as $key) {
-                    $jwkSet->addKey($key);
+                foreach ($jwks->all() as $key) {
+                    $keys[] = $key;
                 }
             } else {
-                $jwkSet->addKey($jwks);
+                $keys[] = $jwks;
             }
         }
 
         $jwku = $metadata->getJwksUri();
         if (!is_null($jwku)) {
             foreach (JWKFactory::createFromJKU($jwku) as $key) {
-                $jwkSet->addKey($key);
+                $keys[] = $key;
             }
         }
+        $jwkSet = new JWKSet($keys);
 
         $key = $jwkSet->selectKey('sig', $alg);
 
