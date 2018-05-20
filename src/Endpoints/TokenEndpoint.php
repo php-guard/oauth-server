@@ -85,6 +85,56 @@ class TokenEndpoint implements EndpointInterface
         $this->clientAuthenticationMethodManager = $clientAuthenticationMethodManager;
     }
 
+    /**
+     * @param ServerRequestInterface $request
+     * @return ResponseInterface
+     *
+     * @see https://tools.ietf.org/html/rfc6749#section-4.1.3
+     * The client makes a request to the token endpoint by sending the
+     * following parameters using the "application/x-www-form-urlencoded"
+     * format per Appendix B with a character encoding of UTF-8 in the HTTP
+     * request entity-body:
+     *
+     * grant_type
+     * REQUIRED.  Value MUST be set to "authorization_code".
+     *
+     * code
+     * REQUIRED.  The authorization code received from the
+     * authorization server.
+     *
+     * redirect_uri
+     * REQUIRED, if the "redirect_uri" parameter was included in the
+     * authorization request as described in Section 4.1.1, and their
+     * values MUST be identical.
+     *
+     * client_id
+     * REQUIRED, if the client is not authenticating with the
+     * authorization server as described in Section 3.2.1.
+     *
+     * If the client type is confidential or the client was issued client
+     * credentials (or assigned other authentication requirements), the
+     * client MUST authenticate with the authorization server as described
+     * in Section 3.2.1.
+     *
+     *  The authorization server MUST:
+     *
+     * o  require client authentication for confidential clients or for any
+     * client that was issued client credentials (or with other
+     * authentication requirements),
+     *
+     * o  authenticate the client if client authentication is included,
+     *
+     * o  ensure that the authorization code was issued to the authenticated
+     * confidential client, or if the client is public, ensure that the
+     * code was issued to "client_id" in the request,
+     *
+     * o  verify that the authorization code is valid, and
+     *
+     * o  ensure that the "redirect_uri" parameter is present if the
+     * "redirect_uri" parameter was included in the initial authorization
+     * request as described in Section 4.1.1, and if included ensure that
+     * their values are identical.
+     */
     public function handleRequest(ServerRequestInterface $request): ResponseInterface
     {
         if ($request->getMethod() === 'POST') {

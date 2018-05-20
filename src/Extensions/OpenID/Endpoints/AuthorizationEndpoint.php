@@ -13,7 +13,7 @@ use OAuth2\Exceptions\OAuthException;
 use OAuth2\Extensions\OpenID\IdTokenManager;
 use OAuth2\IdTokenInterface;
 use OAuth2\ResponseModes\ResponseModeManager;
-use OAuth2\ResponseTypes\ResponseTypeManager;
+use OAuth2\AuthorizationEndpointResponseTypes\ResponseTypeManager;
 use OAuth2\Extensions\OpenID\Roles\ResourceOwnerInterface;
 use OAuth2\ScopePolicy\ScopePolicyManager;
 use OAuth2\Storages\ClientStorageInterface;

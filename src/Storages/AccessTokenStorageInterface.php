@@ -10,25 +10,23 @@ namespace OAuth2\Storages;
 
 
 use OAuth2\Credentials\AccessTokenInterface;
+use OAuth2\Credentials\TokenInterface;
 
-interface AccessTokenStorageInterface
+interface AccessTokenStorageInterface extends TokenStorageInterface
 {
-    function get(string $token): ?AccessTokenInterface;
-
-    function revoke(string $token);
-
-    function generate(array $scopes, string $clientIdentifier, ?string $resourceOwnerIdentifier = null,
-                      ?string $authorizationCode = null): AccessTokenInterface;
-
-    function getLifetime(): ?int;
+    /**
+     * @param string $token
+     * @return null|AccessTokenInterface
+     */
+    function get(string $token): ?TokenInterface;
 
     /**
-     * @param string $code
-     * @return AccessTokenInterface[]|null
+     * @param array $scopes
+     * @param string $clientIdentifier
+     * @param null|string $resourceOwnerIdentifier
+     * @param null|string $authorizationCode
+     * @return AccessTokenInterface
      */
-    function getByAuthorizationCode(string $code): ?array;
-
-    function hasExpired(AccessTokenInterface $accessToken): bool;
-
-    function getSize(): ?int;
+    function generate(array $scopes, string $clientIdentifier, ?string $resourceOwnerIdentifier = null,
+                      ?string $authorizationCode = null): TokenInterface;
 }

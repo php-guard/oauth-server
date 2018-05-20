@@ -14,8 +14,8 @@ use GuzzleHttp\Psr7\Uri;
 use OAuth2\Exceptions\OAuthException;
 use OAuth2\ResponseModes\ResponseModeInterface;
 use OAuth2\ResponseModes\ResponseModeManager;
-use OAuth2\ResponseTypes\ResponseTypeInterface;
-use OAuth2\ResponseTypes\ResponseTypeManager;
+use OAuth2\AuthorizationEndpointResponseTypes\ResponseTypeInterface;
+use OAuth2\AuthorizationEndpointResponseTypes\ResponseTypeManager;
 use OAuth2\Roles\ClientInterface;
 use OAuth2\Roles\ClientTypes\ConfidentialClientInterface;
 use OAuth2\Roles\ClientTypes\PublicClient;
@@ -141,8 +141,15 @@ class AuthorizationEndpoint implements EndpointInterface
         try {
             $this->verifyClient($this->requestData['client_id'] ?? null);
             $this->verifyRedirectUri($this->requestData['redirect_uri'] ?? null, $this->requestData['response_type'] ?? null);
-
         } catch (OAuthException $e) {
+            /**
+             * @see https://tools.ietf.org/html/rfc6749#section-4.1.2.1
+             * If the request fails due to a missing, invalid, or mismatching
+             * redirection URI, or if the client identifier is missing or invalid,
+             * the authorization server SHOULD inform the resource owner of the
+             * error and MUST NOT automatically redirect the user-agent to the
+             * invalid redirection URI.
+             */
             return new Response(400, ['content-type' => 'application/json'], $e->jsonSerialize());
         }
 
@@ -156,7 +163,36 @@ class AuthorizationEndpoint implements EndpointInterface
             }
         } catch (OAuthException $e) {
             /**
-             * If the Authorization Server encounters any error, it MUST return an error response, per Section 3.1.2.6.
+             * @see https://tools.ietf.org/html/rfc6749#section-4.1.2.1
+             * If the resource owner denies the access request or if the request
+             * fails for reasons other than a missing or invalid redirection URI,
+             * the authorization server informs the client by adding the following
+             * parameters to the query component of the redirection URI using the
+             * "application/x-www-form-urlencoded" format, per Appendix B:
+             *
+             * error
+             * REQUIRED.  A single ASCII [USASCII] error code
+             *
+             * error_description
+             * OPTIONAL.  Human-readable ASCII [USASCII] text providing
+             * additional information, used to assist the client developer in
+             * understanding the error that occurred.
+             * Values for the "error_description" parameter MUST NOT include
+             * characters outside the set %x20-21 / %x23-5B / %x5D-7E.
+             *
+             * error_uri
+             * OPTIONAL.  A URI identifying a human-readable web page with
+             * information about the error, used to provide the client
+             * developer with additional information about the error.
+             * Values for the "error_uri" parameter MUST conform to the
+             * URI-reference syntax and thus MUST NOT include characters
+             * outside the set %x21 / %x23-5B / %x5D-7E.
+             *
+             * state
+             * REQUIRED if a "state" parameter was present in the client
+             * authorization request.  The exact value received from the
+             * client.
+             *
              */
             $responseData = [
                 'error' => $e->getError()
@@ -178,13 +214,54 @@ class AuthorizationEndpoint implements EndpointInterface
         return null;
     }
 
+    /**
+     * @param ServerRequestInterface $request
+     * @return ResponseInterface
+     *
+     * @see https://tools.ietf.org/html/rfc6749#section-4.1.1
+     * The client constructs the request URI by adding the following
+     * parameters to the query component of the authorization endpoint URI
+     * using the "application/x-www-form-urlencoded" format, per Appendix B:
+     *
+     * response_type
+     * REQUIRED.  Value MUST be set to [desired response type].
+     *
+     * client_id
+     * REQUIRED.  The client identifier as described in Section 2.2.
+     *
+     * redirect_uri
+     * OPTIONAL.  As described in Section 3.1.2.
+     *
+     * scope
+     * OPTIONAL.  The scope of the access request as described by
+     * Section 3.3.
+     *
+     * state
+     * RECOMMENDED.  An opaque value used by the client to maintain
+     * state between the request and callback.  The authorization
+     * server includes this value when redirecting the user-agent back
+     * to the client.  The parameter SHOULD be used for preventing
+     * cross-site request forgery as described in Section 10.12.
+     */
     public function handleRequest(ServerRequestInterface $request): ResponseInterface
     {
+        /**
+         * @see https://tools.ietf.org/html/rfc6749#section-4.1.1
+         * The authorization server validates the request to ensure that all
+         * required parameters are present and valid.
+         */
         if ($response = $this->verifyRequest($request)) {
             return $response;
         }
 
         try {
+            /**
+             * @see https://tools.ietf.org/html/rfc6749#section-4.1.1
+             * If the request is valid,
+             * the authorization server authenticates the resource owner and obtains
+             * an authorization decision (by asking the resource owner or by
+             * establishing approval via other means).
+             */
             if ($response = $this->verifyConsent($this->requestData)) {
                 return $response;
             }
@@ -209,6 +286,13 @@ class AuthorizationEndpoint implements EndpointInterface
             $responseData['state'] = $this->state;
         }
 
+        /**
+         * @see https://tools.ietf.org/html/rfc6749#section-4.1.1
+         * When a decision is established, the authorization server directs the
+         * user-agent to the provided client redirection URI using an HTTP
+         * redirection response, or by other means available to it via the
+         * user-agent.
+         */
         return $this->getResponseMode()->buildResponse($this, $this->requestData, $responseData);
     }
 
@@ -366,11 +450,8 @@ class AuthorizationEndpoint implements EndpointInterface
      */
     protected function verifyScope(?string $scope = null)
     {
-        $scopes = $this->scopePolicyManager->getScopes($this->getClient(), $scope, $requestedScopes);
+        $this->scopes = $this->scopePolicyManager->getScopes($this->getClient(), $scope, $requestedScopes);
         $this->requestedScopes = $requestedScopes;
-
-        $this->scopePolicyManager->verifyScopes($this->getClient(), $scopes);
-        $this->scopes = $scopes;
     }
 
     /**

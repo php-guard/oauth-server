@@ -35,7 +35,7 @@ abstract class AbstractGrantType implements GrantTypeInterface
     {
         return array_merge(
             $this->issueAccessToken($scope, $clientIdentifier, $resourceOwnerIdentifier, $authorizationCode),
-            $this->issueRefreshToken($scope, $clientIdentifier, $resourceOwnerIdentifier)
+            $this->issueRefreshToken($scope, $clientIdentifier, $resourceOwnerIdentifier, $authorizationCode)
         );
     }
 
@@ -52,9 +52,10 @@ abstract class AbstractGrantType implements GrantTypeInterface
         ];
     }
 
-    protected function issueRefreshToken(array $scope, string $clientIdentifier, ?string $resourceOwnerIdentifier = null)
+    protected function issueRefreshToken(array $scopes, string $clientIdentifier,
+                                         ?string $resourceOwnerIdentifier = null, ?string $authorizationCode = null)
     {
-        $accessToken = $this->refreshTokenStorage->generate($scope, $clientIdentifier, $resourceOwnerIdentifier);
+        $accessToken = $this->refreshTokenStorage->generate($scopes, $clientIdentifier, $resourceOwnerIdentifier, $authorizationCode);
         return [
             'refresh_token' => $accessToken->getToken()
         ];

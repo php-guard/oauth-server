@@ -39,6 +39,21 @@ use OAuth2\Storages\ResourceOwnerStorageInterface;
  * grant type can eliminate the need for the client to store the
  * resource owner credentials for future use, by exchanging the
  * credentials with a long-lived access token or refresh token.
+ *
+ * @see https://tools.ietf.org/html/rfc6749#section-4.3
+ * The resource owner password credentials grant type is suitable in
+ * cases where the resource owner has a trust relationship with the
+ * client, such as the device operating system or a highly privileged
+ * application.  The authorization server should take special care when
+ * enabling this grant type and only allow it when other flows are not
+ * viable.
+ *
+ * This grant type is suitable for clients capable of obtaining the
+ * resource owner's credentials (username and password, typically using
+ * an interactive form).  It is also used to migrate existing clients
+ * using direct authentication schemes such as HTTP Basic or Digest
+ * authentication to OAuth by converting the stored credentials to an
+ * access token.
  */
 class ResourceOwnerPasswordCredentialsFlow extends AbstractGrantType implements FlowInterface
 {
@@ -76,6 +91,64 @@ class ResourceOwnerPasswordCredentialsFlow extends AbstractGrantType implements 
      * @param array $requestData
      * @return array
      * @throws OAuthException
+     *
+     * @see https://tools.ietf.org/html/rfc6749#section-4.3.2
+     * The client makes a request to the token endpoint by adding the
+     * following parameters using the "application/x-www-form-urlencoded"
+     * format per Appendix B with a character encoding of UTF-8 in the HTTP
+     * request entity-body:
+     *
+     * grant_type
+     * REQUIRED.  Value MUST be set to "password".
+     *
+     * username
+     * REQUIRED.  The resource owner username.
+     *
+     * password
+     * REQUIRED.  The resource owner password.
+     *
+     * scope
+     * OPTIONAL.  The scope of the access request as described by
+     * Section 3.3.
+     *
+     * If the client type is confidential or the client was issued client
+     * credentials (or assigned other authentication requirements), the
+     * client MUST authenticate with the authorization server as described
+     * in Section 3.2.1.
+     *
+     * For example, the client makes the following HTTP request using
+     * transport-layer security (with extra line breaks for display purposes
+     * only):
+     *
+     * POST /token HTTP/1.1
+     * Host: server.example.com
+     * Authorization: Basic czZCaGRSa3F0MzpnWDFmQmF0M2JW
+     * Content-Type: application/x-www-form-urlencoded
+     *
+     * grant_type=password&username=johndoe&password=A3ddj3w
+     *
+     * The authorization server MUST:
+     *
+     * o  require client authentication for confidential clients or for any
+     * client that was issued client credentials (or with other
+     * authentication requirements),
+     *
+     * o  authenticate the client if client authentication is included, and
+     *
+     * o  validate the resource owner password credentials using its
+     * existing password validation algorithm.
+     *
+     * Since this access token request utilizes the resource owner's
+     * password, the authorization server MUST protect the endpoint against
+     * brute force attacks (e.g., using rate-limitation or generating
+     * alerts).
+     *
+     * @see https://tools.ietf.org/html/rfc6749#section-4.3.3
+     * If the access token request is valid and authorized, the
+     * authorization server issues an access token and optional refresh
+     * token as described in Section 5.1.  If the request failed client
+     * authentication or is invalid, the authorization server returns an
+     * error response as described in Section 5.2.
      */
     public function handleAccessTokenRequest(TokenEndpoint $tokenEndpoint, array $requestData): array
     {

@@ -33,6 +33,17 @@ use OAuth2\Storages\RefreshTokenStorageInterface;
  * also the resource owner) or is requesting access to protected
  * resources based on an authorization previously arranged with the
  * authorization server.
+ *
+ * @see https://tools.ietf.org/html/rfc6749#section-4.4
+ * The client can request an access token using only its client
+ * credentials (or other supported means of authentication) when the
+ * client is requesting access to the protected resources under its
+ * control, or those of another resource owner that have been previously
+ * arranged with the authorization server (the method of which is beyond
+ * the scope of this specification).
+ *
+ * The client credentials grant type MUST only be used by confidential
+ * clients.
  */
 class ClientCredentialsFlow extends AbstractGrantType implements FlowInterface
 {
@@ -49,6 +60,13 @@ class ClientCredentialsFlow extends AbstractGrantType implements FlowInterface
         $this->scopePolicyManager = $scopePolicyManager;
     }
 
+    /**
+     * @return array
+     *
+     * @see https://tools.ietf.org/html/rfc6749#section-4.4.1
+     * Since the client authentication is used as the authorization grant,
+     * no additional authorization request is needed.
+     */
     public function getResponseTypes(): array
     {
         return [];
@@ -64,6 +82,42 @@ class ClientCredentialsFlow extends AbstractGrantType implements FlowInterface
      * @param array $requestData
      * @return array
      * @throws OAuthException
+     *
+     * @see https://tools.ietf.org/html/rfc6749#section-4.4.2
+     * The client makes a request to the token endpoint by adding the
+     * following parameters using the "application/x-www-form-urlencoded"
+     * format per Appendix B with a character encoding of UTF-8 in the HTTP
+     * request entity-body:
+     *
+     * grant_type
+     * REQUIRED.  Value MUST be set to "client_credentials".
+     *
+     * scope
+     * OPTIONAL.  The scope of the access request as described by
+     * Section 3.3.
+     *
+     * The client MUST authenticate with the authorization server as
+     * described in Section 3.2.1.
+     *
+     * For example, the client makes the following HTTP request using
+     * transport-layer security (with extra line breaks for display purposes
+     * only):
+     *
+     * POST /token HTTP/1.1
+     * Host: server.example.com
+     * Authorization: Basic czZCaGRSa3F0MzpnWDFmQmF0M2JW
+     * Content-Type: application/x-www-form-urlencoded
+     *
+     * grant_type=client_credentials
+     *
+     * The authorization server MUST authenticate the client.
+     *
+     * @see https://tools.ietf.org/html/rfc6749#section-4.4.3
+     * If the access token request is valid and authorized, the
+     * authorization server issues an access token as described in
+     * Section 5.1.  A refresh token SHOULD NOT be included.  If the request
+     * failed client authentication or is invalid, the authorization server
+     * returns an error response as described in Section 5.2.
      */
     public function handleAccessTokenRequest(TokenEndpoint $tokenEndpoint, array $requestData): array
     {
@@ -85,7 +139,7 @@ class ClientCredentialsFlow extends AbstractGrantType implements FlowInterface
          * turn, the authorization server uses the "scope" response parameter to
          * inform the client of the scope of the access token issued.
          */
-        if(Helper::array_equals($requestedScopes, $scopes)) {
+        if (Helper::array_equals($requestedScopes, $scopes)) {
             $responseData['scope'] = implode(' ', $scopes);
         }
 

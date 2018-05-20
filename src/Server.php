@@ -24,7 +24,7 @@ use OAuth2\AuthorizationGrantTypes\RefreshTokenGrantType;
 use OAuth2\ResponseModes\FragmentResponseMode;
 use OAuth2\ResponseModes\QueryResponseMode;
 use OAuth2\ResponseModes\ResponseModeManager;
-use OAuth2\ResponseTypes\ResponseTypeManager;
+use OAuth2\AuthorizationEndpointResponseTypes\ResponseTypeManager;
 use OAuth2\Roles\ResourceOwnerInterface;
 use OAuth2\ScopePolicy\ScopePolicyManager;
 use OAuth2\Storages\StorageManager;
@@ -89,6 +89,7 @@ class Server
 
         // grant_type : refresh_token
         $refreshTokenGrantType = new RefreshTokenGrantType(
+            $config,
             $storageManager->getAccessTokenStorage(),
             $storageManager->getRefreshTokenStorage());
 

@@ -9,7 +9,7 @@
 namespace OAuth2\Credentials;
 
 
-abstract class Token
+abstract class Token implements TokenInterface
 {
     /**
      * @var string
@@ -31,15 +31,20 @@ abstract class Token
      * @var \DateTimeInterface
      */
     protected $expiresAt;
+    /**
+     * @var string|null
+     */
+    protected $authorizationCode;
 
     public function __construct(string $token, array $scopes, string $clientIdentifier, ?string $resourceOwnerIdentifier,
-                                \DateTimeInterface $expiresAt)
+                                \DateTimeInterface $expiresAt, ?string $authorizationCode = null)
     {
         $this->token = $token;
         $this->scopes = $scopes;
         $this->clientIdentifier = $clientIdentifier;
         $this->resourceOwnerIdentifier = $resourceOwnerIdentifier;
         $this->expiresAt = $expiresAt;
+        $this->authorizationCode = $authorizationCode;
     }
 
     /**
@@ -80,5 +85,13 @@ abstract class Token
     public function getExpiresAt(): \DateTimeInterface
     {
         return $this->expiresAt;
+    }
+
+    /**
+     * @return string
+     */
+    public function getAuthorizationCode(): ?string
+    {
+        return $this->authorizationCode;
     }
 }

@@ -19,6 +19,11 @@ abstract class Helper
         return preg_match('/[^\x20-\x7e]/', $string);
     }
 
+    /**
+     * @param int $length
+     * @return string
+     * @throws \Exception
+     */
     public static function generateToken($length = self::LENGTH)
     {
         $token = '';
@@ -28,46 +33,46 @@ abstract class Helper
         return $token;
     }
 
-    public static function pemToInline($pem)
-    {
-        $pem = str_replace('-----BEGIN PUBLIC KEY-----', '', $pem);
-        $pem = str_replace('-----END PUBLIC KEY-----', '', $pem);
-        $pem = str_replace("\n", '', $pem);
-        return $pem;
-    }
+//    public static function pemToInline($pem)
+//    {
+//        $pem = str_replace('-----BEGIN PUBLIC KEY-----', '', $pem);
+//        $pem = str_replace('-----END PUBLIC KEY-----', '', $pem);
+//        $pem = str_replace("\n", '', $pem);
+//        return $pem;
+//    }
 
-    public static function certToArray($cert)
-    {
-        return [
-            'kty' => 'RSA',
-            'alg' => 'RSA256',
-            'use' => 'sig',
-            'kid' => $cert->getKid(),
-            'n' => $cert->getN(),
-            'e' => $cert->getE(),
-            'x5c' => self::pemToInline($cert->getPublicKey())
-        ];
-    }
+//    public static function certToArray($cert)
+//    {
+//        return [
+//            'kty' => 'RSA',
+//            'alg' => 'RSA256',
+//            'use' => 'sig',
+//            'kid' => $cert->getKid(),
+//            'n' => $cert->getN(),
+//            'e' => $cert->getE(),
+//            'x5c' => self::pemToInline($cert->getPublicKey())
+//        ];
+//    }
 
-    public static function generateRSAKeys()
-    {
-        $config = array(
-            "digest_alg" => "sha512",
-            "private_key_bits" => 4096,
-            "private_key_type" => OPENSSL_KEYTYPE_RSA,
-        );
-        // Create the private and public key
-        $res = openssl_pkey_new($config);
-
-        // Extract the private key from $res to $privKey
-        openssl_pkey_export($res, $privKey);
-
-        // Extract the public key from $res to $pubKey
-        $details = openssl_pkey_get_details($res);
-
-        $pubKey = $details["key"];
-        return ['privKey' => $privKey, 'pubKey' => $pubKey, 'rsa' => $details['rsa']];
-    }
+//    public static function generateRSAKeys()
+//    {
+//        $config = array(
+//            "digest_alg" => "sha512",
+//            "private_key_bits" => 4096,
+//            "private_key_type" => OPENSSL_KEYTYPE_RSA,
+//        );
+//        // Create the private and public key
+//        $res = openssl_pkey_new($config);
+//
+//        // Extract the private key from $res to $privKey
+//        openssl_pkey_export($res, $privKey);
+//
+//        // Extract the public key from $res to $pubKey
+//        $details = openssl_pkey_get_details($res);
+//
+//        $pubKey = $details["key"];
+//        return ['privKey' => $privKey, 'pubKey' => $pubKey, 'rsa' => $details['rsa']];
+//    }
 
     /**
      * @param $data

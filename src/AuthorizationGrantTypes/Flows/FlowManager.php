@@ -10,7 +10,7 @@ namespace OAuth2\AuthorizationGrantTypes\Flows;
 
 
 use OAuth2\AuthorizationGrantTypes\GrantTypeManager;
-use OAuth2\ResponseTypes\ResponseTypeManager;
+use OAuth2\AuthorizationEndpointResponseTypes\ResponseTypeManager;
 
 class FlowManager
 {

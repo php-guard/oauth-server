@@ -15,40 +15,24 @@ use OAuth2\ScopePolicy\Policies\ScopePolicyInterface;
 class Config
 {
     /**
-     * @var array
-     */
-//    protected $defaultScopes = [];
-
-    /**
      * @var ScopePolicyInterface
      */
     protected $scopePolicy;
+
     /**
-     * @var DefaultScopePolicy
+     * @var bool
      */
-//    private $defaultScopePolicy;
+    protected $issueNewRefreshToken = true;
+
+    /**
+     * @var bool
+     */
+    protected $revokeOldRefreshToken = true;
 
     public function __construct(ScopePolicyInterface $scopePolicy)
     {
         $this->scopePolicy = $scopePolicy;
     }
-
-    /**
-     * @return array
-     */
-//    public function getDefaultScopes(): array
-//    {
-//        return $this->defaultScopes;
-//    }
-
-    /**
-     * @param array $defaultScopes
-     */
-//    public function setDefaultScopes(array $defaultScopes): void
-//    {
-//        $this->defaultScopes = $defaultScopes;
-//        $this->defaultScopePolicy->setScopes($defaultScopes);
-//    }
 
     /**
      * @return ScopePolicyInterface
@@ -64,5 +48,40 @@ class Config
     public function setScopePolicy(ScopePolicyInterface $scopePolicy): void
     {
         $this->scopePolicy = $scopePolicy;
+    }
+
+    /**
+     * @return bool
+     */
+    public function mayIssueNewRefreshToken(): bool
+    {
+        return $this->issueNewRefreshToken;
+    }
+
+    /**
+     * @param bool $issueNewRefreshToken
+     */
+    public function setIssueNewRefreshToken(bool $issueNewRefreshToken): void
+    {
+        if($issueNewRefreshToken) {
+            $this->setRevokeOldRefreshToken(true);
+        }
+        $this->issueNewRefreshToken = $issueNewRefreshToken;
+    }
+
+    /**
+     * @return bool
+     */
+    public function mayRevokeOldRefreshToken(): bool
+    {
+        return $this->revokeOldRefreshToken;
+    }
+
+    /**
+     * @param bool $revokeOldRefreshToken
+     */
+    public function setRevokeOldRefreshToken(bool $revokeOldRefreshToken): void
+    {
+        $this->revokeOldRefreshToken = $revokeOldRefreshToken;
     }
 }

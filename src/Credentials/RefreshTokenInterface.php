@@ -32,15 +32,6 @@ namespace OAuth2\Credentials;
  * intended for use only with authorization servers and are never sent
  * to resource servers.
  */
-interface RefreshTokenInterface
+interface RefreshTokenInterface extends TokenInterface
 {
-    function getToken(): string;
-
-    function getScopes(): array;
-
-    function getClientIdentifier(): string;
-
-    function getResourceOwnerIdentifier(): ?string;
-
-    function getExpiresAt(): \DateTimeInterface;
 }

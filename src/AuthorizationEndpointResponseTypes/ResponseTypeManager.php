@@ -6,7 +6,7 @@
  * Time: 19:12
  */
 
-namespace OAuth2\ResponseTypes;
+namespace OAuth2\AuthorizationEndpointResponseTypes;
 
 
 class ResponseTypeManager

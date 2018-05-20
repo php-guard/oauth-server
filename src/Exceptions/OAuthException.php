@@ -24,6 +24,33 @@ class OAuthException extends \Exception implements \JsonSerializable
      */
     private $errorUri;
 
+    /**
+     * OAuthException constructor.
+     * @param string $error
+     * @param null|string $errorDescription
+     * @param null|string $errorUri
+     *
+     * error
+     * REQUIRED.  A single ASCII [USASCII] error code.
+     *
+     * Values for the "error" parameter MUST NOT include characters
+     * outside the set %x20-21 / %x23-5B / %x5D-7E.
+     *
+     * error_description
+     * OPTIONAL.  Human-readable ASCII [USASCII] text providing
+     * additional information, used to assist the client developer in
+     * understanding the error that occurred.
+     * Values for the "error_description" parameter MUST NOT include
+     * characters outside the set %x20-21 / %x23-5B / %x5D-7E.
+     *
+     * error_uri
+     * OPTIONAL.  A URI identifying a human-readable web page with
+     * information about the error, used to provide the client
+     * developer with additional information about the error.
+     * Values for the "error_uri" parameter MUST conform to the
+     * URI-reference syntax and thus MUST NOT include characters
+     * outside the set %x21 / %x23-5B / %x5D-7E.
+     */
     public function __construct(string $error, ?string $errorDescription = null, ?string $errorUri = null)
     {
         parent::__construct($errorDescription);

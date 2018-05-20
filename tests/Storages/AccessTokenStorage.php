@@ -12,6 +12,7 @@ namespace OAuth2\Tests\Storages;
 use OAuth2\Credentials\AccessToken;
 use OAuth2\Credentials\AccessTokenInterface;
 use OAuth2\Credentials\Token;
+use OAuth2\Credentials\TokenInterface;
 use OAuth2\Helper;
 use OAuth2\Storages\AccessTokenStorageInterface;
 
@@ -22,7 +23,7 @@ class AccessTokenStorage implements AccessTokenStorageInterface
      */
     protected $tokens = [];
 
-    public function get(string $token): ?AccessTokenInterface
+    public function get(string $token): ?TokenInterface
     {
         return $this->tokens[$token] ?? null;
     }
@@ -32,8 +33,16 @@ class AccessTokenStorage implements AccessTokenStorageInterface
         unset($this->tokens[$token]);
     }
 
+    /**
+     * @param array $scopes
+     * @param string $clientIdentifier
+     * @param null|string $resourceOwnerIdentifier
+     * @param null|string $authorizationCode
+     * @return AccessTokenInterface
+     * @throws \Exception
+     */
     public function generate(array $scopes, string $clientIdentifier, ?string $resourceOwnerIdentifier = null,
-                             ?string $authorizationCode = null): AccessTokenInterface
+                             ?string $authorizationCode = null): TokenInterface
     {
         $expiresAt = new \DateTime('now', new \DateTimeZone('UTC'));
         $expiresAt->modify('+'.$this->getLifetime().' seconds');
@@ -52,18 +61,18 @@ class AccessTokenStorage implements AccessTokenStorageInterface
      * @param string $code
      * @return AccessTokenInterface[]|null
      */
-    public function getByAuthorizationCode(string $code): ?array
+    public function getByAuthorizationCode(string $code): array
     {
         $tokens = [];
         foreach ($this->tokens as $token) {
-            if ($token instanceof AccessToken && $token->getAuthorizationCode() === $code) {
+            if ($token->getAuthorizationCode() === $code) {
                 $tokens[] = $token;
             }
         }
         return $tokens;
     }
 
-    public function hasExpired(AccessTokenInterface $accessToken): bool
+    public function hasExpired(TokenInterface $accessToken): bool
     {
         $now = new \DateTime('now', new \DateTimeZone('UTC'));
         return $now > $accessToken->getExpiresAt();

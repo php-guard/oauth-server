@@ -41,17 +41,15 @@ namespace OAuth2\Credentials;
  * this specification and are defined by companion specifications such
  * as [RFC6750].
  */
-interface AccessTokenInterface
+interface AccessTokenInterface extends TokenInterface
 {
-    function getToken(): string;
-
+    /**
+     * @return string
+     *
+     * @see https://tools.ietf.org/html/rfc6749#section-7.1
+     * The access token type provides the client with the information
+     * required to successfully utilize the access token to make a protected
+     * resource request (along with type-specific attributes).
+     */
     function getType(): string;
-
-    function getScopes(): array;
-
-    function getClientIdentifier(): string;
-
-    function getResourceOwnerIdentifier(): ?string;
-
-    function getExpiresAt(): \DateTimeInterface;
 }
