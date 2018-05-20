@@ -1,7 +1,7 @@
 # oauth-server
 
 [![Build Status](https://travis-ci.org/php-guard/oauth-server.svg?branch=master)](https://travis-ci.org/php-guard/oauth-server)
-[![Dependency Status](https://www.versioneye.com/user/projects/5a6109f70fb24f00459108d2/badge.svg?style=flat-square)](https://www.versioneye.com/user/projects/5a6109f70fb24f00459108d2)
+[![Dependency Status](https://www.versioneye.com/user/projects/5b01989f0fb24f52bea0898e/badge.svg?style=flat-square)](https://www.versioneye.com/user/projects/5b01989f0fb24f52bea0898e)
 [![Scrutinizer Code Quality](https://scrutinizer-ci.com/g/php-guard/oauth-server/badges/quality-score.png?b=master)](https://scrutinizer-ci.com/g/php-guard/php-guard/?branch=master)
 [![Code Coverage](https://scrutinizer-ci.com/g/php-guard/oauth-server/badges/coverage.png?b=master)](https://scrutinizer-ci.com/g/php-guard/php-guard/?branch=master)
 [![GPL Licence](https://badges.frapsoft.com/os/gpl/gpl.png?v=103)](https://opensource.org/licenses/GPL-3.0/)
