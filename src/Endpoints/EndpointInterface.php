@@ -37,5 +37,5 @@ use Psr\Http\Message\ServerRequestInterface;
  */
 interface EndpointInterface
 {
-    function handleRequest(ServerRequestInterface $request): ResponseInterface;
+public function handleRequest(ServerRequestInterface $request): ResponseInterface;
 }

@@ -11,7 +11,7 @@ namespace OAuth2\Tests\Storages;
 
 use OAuth2\Credentials\AccessToken;
 use OAuth2\Credentials\AccessTokenInterface;
-use OAuth2\Credentials\Token;
+
 use OAuth2\Credentials\TokenInterface;
 use OAuth2\Helper;
 use OAuth2\Storages\AccessTokenStorageInterface;

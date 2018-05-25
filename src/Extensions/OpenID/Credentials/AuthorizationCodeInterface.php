@@ -16,5 +16,5 @@ namespace OAuth2\Extensions\OpenID\Credentials;
  */
 interface AuthorizationCodeInterface extends \OAuth2\Credentials\AuthorizationCodeInterface
 {
-    function getIdToken(): ?string;
+public function getIdToken(): ?string;
 }

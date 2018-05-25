@@ -41,7 +41,7 @@ class IdToken implements IdTokenInterface
         $this->claims = $claims;
     }
 
-    function getClaims() : array
+public function getClaims() : array
     {
        return $this->claims;
     }

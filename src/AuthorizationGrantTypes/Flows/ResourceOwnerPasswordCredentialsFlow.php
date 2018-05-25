@@ -9,7 +9,7 @@
 namespace OAuth2\AuthorizationGrantTypes\Flows;
 
 
-use OAuth2\Endpoints\AuthorizationEndpoint;
+use OAuth2\Endpoints\AuthorizationRequest;
 use OAuth2\Endpoints\TokenEndpoint;
 use OAuth2\Exceptions\OAuthException;
 use OAuth2\AuthorizationGrantTypes\AbstractGrantType;
@@ -166,8 +166,8 @@ class ResourceOwnerPasswordCredentialsFlow extends AbstractGrantType implements 
 
         $client = $tokenEndpoint->getClient();
 
-        $scopes = $this->scopePolicyManager->getScopes($client, $requestData['scope'] ?? null, $requestedScopes);
-        $this->scopePolicyManager->verifyScopes($client, $scopes);
+        $requestedScopes = $this->scopePolicyManager->scopeStringToArray($requestData['scope'] ?? null);
+        $scopes = $this->scopePolicyManager->getScopes($client, $requestedScopes);
 
         $resourceOwnerIdentifier = $this->resourceOwnerStorage->validateCredentials(
             $requestData['username'], $requestData['password']);
@@ -194,12 +194,12 @@ class ResourceOwnerPasswordCredentialsFlow extends AbstractGrantType implements 
         return $responseData;
     }
 
-    public function verifyAuthorizationRequest(AuthorizationEndpoint $authorizationEndpoint, array $requestData)
+    public function verifyAuthorizationRequest()
     {
         throw new \BadMethodCallException();
     }
 
-    public function handleAuthorizationRequest(AuthorizationEndpoint $authorizationEndpoint, array $requestData): array
+    public function handleAuthorizationRequest(AuthorizationRequest $authorizationRequest): array
     {
         throw new \BadMethodCallException();
     }
@@ -210,6 +210,11 @@ class ResourceOwnerPasswordCredentialsFlow extends AbstractGrantType implements 
     }
 
     public function getUnsupportedResponseModes(): array
+    {
+        throw new \BadMethodCallException();
+    }
+
+    public function isRegistrationOfRedirectUriRequired(): bool
     {
         throw new \BadMethodCallException();
     }

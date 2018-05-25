@@ -9,7 +9,7 @@
 namespace OAuth2\Storages;
 
 
-use OAuth2\Roles\ClientInterface;
+
 use OAuth2\Roles\ClientTypes\RegisteredClient;
 
 interface ClientStorageInterface
@@ -18,7 +18,7 @@ interface ClientStorageInterface
      * @param string $identifier
      * @return null|RegisteredClient
      */
-    function get(string $identifier): ?RegisteredClient;
+public function get(string $identifier): ?RegisteredClient;
 
-    function getIdentifierSize(): ?int;
+public function getIdentifierSize(): ?int;
 }

@@ -173,5 +173,5 @@ interface GrantTypeInterface
      * "error":"invalid_request"
      * }
      */
-    function handleAccessTokenRequest(TokenEndpoint $tokenEndpoint, array $requestData): array;
+    public function handleAccessTokenRequest(TokenEndpoint $tokenEndpoint, array $requestData): array;
 }

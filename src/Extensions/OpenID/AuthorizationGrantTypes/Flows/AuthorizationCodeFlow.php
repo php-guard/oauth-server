@@ -51,11 +51,11 @@ class AuthorizationCodeFlow extends \OAuth2\AuthorizationGrantTypes\Flows\Author
      * @param AuthorizationEndpoint $authorizationEndpoint
      * @param array $requestData
      * @throws OAuthException
+     * @deprecated move to request builder
+     * TODO
      */
     public function verifyAuthorizationRequest(AuthorizationEndpoint $authorizationEndpoint, array $requestData)
     {
-        parent::verifyAuthorizationRequest($authorizationEndpoint, $requestData);
-
         if (in_array('openid', $authorizationEndpoint->getScopes())) {
             if (!$authorizationEndpoint instanceof \OAuth2\Extensions\OpenID\Endpoints\AuthorizationEndpoint) {
                 throw new \InvalidArgumentException();

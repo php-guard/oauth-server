@@ -10,7 +10,6 @@ namespace OAuth2\AuthorizationGrantTypes;
 
 
 use OAuth2\Config;
-use OAuth2\Credentials\RefreshToken;
 use OAuth2\Endpoints\TokenEndpoint;
 use OAuth2\Exceptions\OAuthException;
 use OAuth2\Helper;
@@ -91,13 +90,19 @@ class RefreshTokenGrantType extends AbstractGrantType implements GrantTypeInterf
      * @var Config
      */
     private $config;
+    /**
+     * @var ScopePolicyManager
+     */
+    private $scopePolicyManager;
 
-    public function __construct(Config $config,
-                                AccessTokenStorageInterface $accessTokenStorage,
-                                RefreshTokenStorageInterface $refreshTokenStorage)
+    public function __construct(AccessTokenStorageInterface $accessTokenStorage,
+                                RefreshTokenStorageInterface $refreshTokenStorage,
+                                Config $config,
+                                ScopePolicyManager $scopePolicyManager)
     {
         parent::__construct($accessTokenStorage, $refreshTokenStorage);
         $this->config = $config;
+        $this->scopePolicyManager = $scopePolicyManager;
     }
 
     /**
@@ -129,7 +134,7 @@ class RefreshTokenGrantType extends AbstractGrantType implements GrantTypeInterf
         }
 
         $scopes = $refreshToken->getScopes();
-        $requestedScopes = ScopePolicyManager::scopeStringToArray($requestData['scope'] ?? null);
+        $requestedScopes = $this->scopePolicyManager->scopeStringToArray($requestData['scope'] ?? null);
 
         if (!empty($requestedScopes)) {
             if (!empty(array_diff($requestedScopes, $refreshToken->getScopes()))) {

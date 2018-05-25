@@ -24,22 +24,21 @@ use OAuth2\Roles\ClientInterface;
  */
 abstract class UnregisteredClient implements ClientInterface
 {
-    protected $metadata;
     /**
-     * @var ClientMetadata
+     * @var ClientMetadataInterface
      */
     private $clientMetadata;
 
-    public function __construct(ClientMetadata $clientMetadata)
+    public function __construct(ClientMetadataInterface $clientMetadata)
     {
         $this->clientMetadata = $clientMetadata;
     }
 
     /**
-     * @return ClientMetadata
+     * @return ClientMetadataInterface
      */
-    public function getMetadata(): ClientMetadata
+    public function getMetadata(): ClientMetadataInterface
     {
-        return $this->metadata;
+        return $this->clientMetadata;
     }
 }

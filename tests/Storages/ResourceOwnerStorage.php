@@ -22,7 +22,7 @@ class ResourceOwnerStorage implements ResourceOwnerStorageInterface
      * @param string $identifier
      * @return bool
      */
-    function exists(string $identifier): bool
+public function exists(string $identifier): bool
     {
         return $identifier == 'phpunit';
     }

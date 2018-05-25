@@ -13,6 +13,7 @@ use OAuth2\ClientAuthentication\ClientAuthenticationMethodManager;
 use OAuth2\ClientAuthentication\ClientSecretBasicAuthenticationMethod;
 use OAuth2\ClientAuthentication\ClientSecretPostAuthenticationMethod;
 use OAuth2\Endpoints\AuthorizationEndpoint;
+use OAuth2\Endpoints\AuthorizationRequestBuilder;
 use OAuth2\Endpoints\TokenEndpoint;
 use OAuth2\AuthorizationGrantTypes\Flows\AuthorizationCodeFlow;
 use OAuth2\AuthorizationGrantTypes\Flows\ClientCredentialsFlow;
@@ -54,9 +55,9 @@ class Server
         $this->clientAuthenticationMethodManager->addClientAuthenticationMethod('client_secret_post',
             new ClientSecretPostAuthenticationMethod($storageManager->getClientStorage()));
 
-        $queryResponseMode = new QueryResponseMode();
-        $this->responseModeManager = new ResponseModeManager($queryResponseMode);
-        $this->responseModeManager->addResponseMode('query', $queryResponseMode);
+//        $queryResponseMode = new QueryResponseMode();
+        $this->responseModeManager = new ResponseModeManager();
+        $this->responseModeManager->addResponseMode('query', new QueryResponseMode());
         $this->responseModeManager->addResponseMode('fragment', new FragmentResponseMode());
 
         // response_type : code
@@ -89,9 +90,11 @@ class Server
 
         // grant_type : refresh_token
         $refreshTokenGrantType = new RefreshTokenGrantType(
-            $config,
             $storageManager->getAccessTokenStorage(),
-            $storageManager->getRefreshTokenStorage());
+            $storageManager->getRefreshTokenStorage(),
+            $config,
+            $this->scopePolicyManager
+        );
 
         $this->flowManager = new FlowManager($this->responseTypeManager, $this->grantTypeManager);
         $this->flowManager->addFlow($authorizationCodeFlow);
@@ -101,12 +104,13 @@ class Server
 
         $this->grantTypeManager->addGrantType('refresh_token', $refreshTokenGrantType);
 
-        $this->authorizationEndpoint = new AuthorizationEndpoint(
+        $authorizationRequestBuilder = new AuthorizationRequestBuilder(
+            $storageManager->getClientStorage(),
             $this->responseTypeManager,
             $this->responseModeManager,
-            $this->scopePolicyManager,
-            $resourceOwner,
-            $storageManager->getClientStorage());
+            $this->scopePolicyManager
+        );
+        $this->authorizationEndpoint = new AuthorizationEndpoint($authorizationRequestBuilder, $resourceOwner);
 
         $this->tokenEndpoint = new TokenEndpoint(
             $storageManager->getClientStorage(),

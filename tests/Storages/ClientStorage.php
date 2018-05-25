@@ -36,12 +36,12 @@ class ClientStorage implements ClientStorageInterface
      * @param string $identifier
      * @return null|RegisteredClient
      */
-    function get(string $identifier): ?RegisteredClient
+public function get(string $identifier): ?RegisteredClient
     {
         return $this->clients[$identifier] ?? null;
     }
 
-    function getIdentifierSize(): ?int
+public function getIdentifierSize(): ?int
     {
         return null;
     }

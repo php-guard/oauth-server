@@ -10,6 +10,7 @@ namespace OAuth2\AuthorizationGrantTypes\Flows;
 
 
 use OAuth2\Endpoints\AuthorizationEndpoint;
+use OAuth2\Endpoints\AuthorizationRequest;
 use OAuth2\Endpoints\TokenEndpoint;
 use OAuth2\AuthorizationGrantTypes\AbstractGrantType;
 use OAuth2\Helper;
@@ -146,8 +147,7 @@ class ImplicitFlow extends AbstractGrantType implements FlowInterface
     }
 
     /**
-     * @param AuthorizationEndpoint $authorizationEndpoint
-     * @param array $requestData
+     * @param AuthorizationRequest $authorizationRequest
      * @return array
      *
      * @see https://tools.ietf.org/html/rfc6749#section-4.2.2
@@ -203,12 +203,12 @@ class ImplicitFlow extends AbstractGrantType implements FlowInterface
      * client should avoid making assumptions about value sizes.  The
      * authorization server SHOULD document the size of any value it issues.
      */
-    public function handleAuthorizationRequest(AuthorizationEndpoint $authorizationEndpoint, array $requestData): array
+    public function handleAuthorizationRequest(AuthorizationRequest $authorizationRequest): array
     {
         $data = $this->issueAccessToken(
-            $authorizationEndpoint->getScopes(),
-            $authorizationEndpoint->getClient()->getIdentifier(),
-            $authorizationEndpoint->getResourceOwner()->getIdentifier()
+            $authorizationRequest->getScopes(),
+            $authorizationRequest->getClient()->getIdentifier(),
+            $authorizationRequest->getResourceOwner()->getIdentifier()
         );
 
         /**
@@ -218,9 +218,8 @@ class ImplicitFlow extends AbstractGrantType implements FlowInterface
          * turn, the authorization server uses the "scope" response parameter to
          * inform the client of the scope of the access token issued.
          */
-        if (empty($requestData['scope']) ||
-            !Helper::array_equals($authorizationEndpoint->getScopes(), $requestData['scope'])) {
-            $data['scope'] = implode(' ', $authorizationEndpoint->getScopes());
+        if (!Helper::array_equals($authorizationRequest->getScopes(), $authorizationRequest->getRequestedScopes())) {
+            $data['scope'] = implode(' ', $authorizationRequest->getScopes());
         }
 
         return $data;
@@ -234,6 +233,11 @@ class ImplicitFlow extends AbstractGrantType implements FlowInterface
     public function getUnsupportedResponseModes(): array
     {
         return ['query'];
+    }
+
+    public function isRegistrationOfRedirectUriRequired(): bool
+    {
+        return true;
     }
 
     public function getGrantTypes(): array

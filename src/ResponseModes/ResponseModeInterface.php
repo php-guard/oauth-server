@@ -9,10 +9,11 @@
 namespace OAuth2\ResponseModes;
 
 
-use OAuth2\Endpoints\AuthorizationEndpoint;
+
 use Psr\Http\Message\ResponseInterface;
+use Psr\Http\Message\UriInterface;
 
 interface ResponseModeInterface
 {
-    function buildResponse(AuthorizationEndpoint $authorizationEndpoint, array $requestData, array $responseData): ResponseInterface;
+public function buildResponse(UriInterface $redirectUri, array $responseData): ResponseInterface;
 }

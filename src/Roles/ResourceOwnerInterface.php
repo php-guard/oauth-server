@@ -9,7 +9,8 @@
 namespace OAuth2\Roles;
 
 
-use OAuth2\Endpoints\AuthorizationEndpoint;
+
+use OAuth2\Endpoints\AuthorizationRequest;
 use Psr\Http\Message\ResponseInterface;
 
 /**
@@ -23,7 +24,7 @@ use Psr\Http\Message\ResponseInterface;
  */
 interface ResourceOwnerInterface
 {
-    function getIdentifier(): string;
+    public function getIdentifier(): string;
 
     /**
      * null: No decision given yet
@@ -34,11 +35,11 @@ interface ResourceOwnerInterface
      * @param array $scopes
      * @return array|null
      */
-    function hasGivenConsent(ClientInterface $client, array $scopes): ?array;
+    public function hasGivenConsent(ClientInterface $client, array $scopes): ?array;
 
-    function obtainConsent(AuthorizationEndpoint $authorizationEndpoint, array $requestData): ResponseInterface;
+    public function obtainConsent(AuthorizationRequest $authorizationRequest): ResponseInterface;
 
-    function isAuthenticated(): bool;
+    public function isAuthenticated(): bool;
 
-    function authenticate(): ResponseInterface;
+    public function authenticate(): ResponseInterface;
 }

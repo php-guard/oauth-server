@@ -140,5 +140,5 @@ interface JsonWebTokenInterface extends \JsonSerializable
 
     ];
 
-    function getClaims(): array;
+public function getClaims(): array;
 }

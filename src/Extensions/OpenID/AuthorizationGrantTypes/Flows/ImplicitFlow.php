@@ -16,6 +16,7 @@ use OAuth2\Extensions\OpenID\IdTokenManager;
 use OAuth2\Extensions\OpenID\Roles\Clients\ClientMetadataInterface;
 use OAuth2\AuthorizationGrantTypes\Flows\FlowInterface;
 use OAuth2\AuthorizationGrantTypes\AbstractGrantType;
+use OAuth2\Extensions\OpenID\Roles\ResourceOwnerInterface;
 use OAuth2\Helper;
 use OAuth2\Storages\AccessTokenStorageInterface;
 use OAuth2\Storages\RefreshTokenStorageInterface;
@@ -38,7 +39,7 @@ class ImplicitFlow extends AbstractGrantType implements FlowInterface
     /**
      * @return string[]
      */
-    function getResponseTypes(): array
+    public function getResponseTypes(): array
     {
         return [
             'id_token',
@@ -49,12 +50,12 @@ class ImplicitFlow extends AbstractGrantType implements FlowInterface
     /**
      * @return string[]
      */
-    function getGrantTypes(): array
+    public function getGrantTypes(): array
     {
         return [];
     }
 
-    function handleAccessTokenRequest(TokenEndpoint $tokenEndpoint, array $requestData): array
+    public function handleAccessTokenRequest(TokenEndpoint $tokenEndpoint, array $requestData): array
     {
         return [];
     }
@@ -85,23 +86,27 @@ class ImplicitFlow extends AbstractGrantType implements FlowInterface
             throw new \InvalidArgumentException();
         }
 
-        if (!is_null($authorizationEndpoint->getMaxAge())) {
-            $time = $authorizationEndpoint->getResourceOwner()->getLastTimeActivelyAuthenticated();
-            $idToken['auth_time'] = $time ? $time->getTimestamp() : $authorizationEndpoint->getMaxAge();
+        $resourceOwner = $authorizationEndpoint->getResourceOwner();
+        $idToken = [];
+
+        if ($resourceOwner instanceof ResourceOwnerInterface) {
+            if (!is_null($authorizationEndpoint->getMaxAge())) {
+                $time = $resourceOwner->getLastTimeActivelyAuthenticated();
+                $idToken['auth_time'] = $time ? $time->getTimestamp() : $authorizationEndpoint->getMaxAge();
+            }
+            $acr = $resourceOwner->getAuthenticationContextClassReference();
+            if (!is_null($acr)) {
+                $idToken['acr'] = $acr;
+            }
+
+            $amr = $resourceOwner->getAuthenticationMethodsReferences();
+            if (!is_null($amr)) {
+                $idToken['amr'] = $amr;
+            }
         }
 
         if (!is_null($authorizationEndpoint->getNonce())) {
             $idToken['nonce'] = $authorizationEndpoint->getNonce();
-        }
-
-        $acr = $authorizationEndpoint->getResourceOwner()->getAuthenticationContextClassReference();
-        if (!is_null($acr)) {
-            $idToken['acr'] = $acr;
-        }
-
-        $amr = $authorizationEndpoint->getResourceOwner()->getAuthenticationMethodsReferences();
-        if (!is_null($amr)) {
-            $idToken['amr'] = $amr;
         }
 
         $accessToken = $this->issueAccessToken(
@@ -119,7 +124,7 @@ class ImplicitFlow extends AbstractGrantType implements FlowInterface
         $macAlgorithm = substr($alg, -3);
 
         if (!in_array($macAlgorithm, [256, 384, 512])) {
-            die("algotihmn not supported");
+            throw new \UnexpectedValueException("Algotihmn '".$macAlgorithm."' not supported");
         }
         $macAlgorithm = 'sha' . $macAlgorithm;
 
@@ -129,18 +134,28 @@ class ImplicitFlow extends AbstractGrantType implements FlowInterface
         $atHash = Helper::base64url_encode($atHash);
         $idToken['at_hash'] = $atHash;
 
-        $result['id_token'] = $this->idTokenManager->issueIdToken($authorizationEndpoint->getClient(), $authorizationEndpoint->getResourceOwner());
+        $result = [];
+        $result['id_token'] = $this->idTokenManager->issueIdToken(
+            $authorizationEndpoint->getClient(),
+            $authorizationEndpoint->getResourceOwner()
+        );
+
 //        $result = array_merge($result, $accessToken);
         return $result;
     }
 
-    function getDefaultResponseMode(): string
+    public function getDefaultResponseMode(): string
     {
         return 'fragment';
     }
 
-    function getUnsupportedResponseModes(): array
+    public function getUnsupportedResponseModes(): array
     {
         return ['query'];
+    }
+
+    public function isRegistrationOfRedirectUriRequired(): bool
+    {
+        return true;
     }
 }

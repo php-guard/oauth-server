@@ -9,7 +9,8 @@
 namespace OAuth2\Extensions\OpenID\Roles;
 
 
-use OAuth2\Extensions\OpenID\Endpoints\AuthorizationEndpoint;
+use OAuth2\Endpoints\AuthorizationRequest;
+
 use OAuth2\Roles\ClientInterface;
 use Psr\Http\Message\ResponseInterface;
 
@@ -37,9 +38,9 @@ interface ResourceOwnerInterface extends \OAuth2\Roles\ResourceOwnerInterface
 
     public function hasGivenConsent(ClientInterface $client, array $scopes, ?bool $alwaysPromptConsent = false): ?array;
 
-    public function obtainConsent(\OAuth2\Endpoints\AuthorizationEndpoint $authorizationEndpoint, array $requestData): ResponseInterface;
+    public function obtainConsent(AuthorizationRequest $authorizationRequest): ResponseInterface;
 
-    public function isInteractionRequiredForConsent(AuthorizationEndpoint $authorizationEndpoint): bool;
+    public function isInteractionRequiredForConsent(AuthorizationRequest $authorizationRequest): bool;
 
     public function getClaims(array $scopes): array;
     /**

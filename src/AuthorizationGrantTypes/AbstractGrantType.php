@@ -30,19 +30,19 @@ abstract class AbstractGrantType implements GrantTypeInterface
         $this->refreshTokenStorage = $refreshTokenStorage;
     }
 
-    protected function issueTokens(array $scope, string $clientIdentifier, ?string $resourceOwnerIdentifier = null,
+    protected function issueTokens(array $scopes, string $clientIdentifier, ?string $resourceOwnerIdentifier = null,
                                    ?string $authorizationCode = null)
     {
         return array_merge(
-            $this->issueAccessToken($scope, $clientIdentifier, $resourceOwnerIdentifier, $authorizationCode),
-            $this->issueRefreshToken($scope, $clientIdentifier, $resourceOwnerIdentifier, $authorizationCode)
+            $this->issueAccessToken($scopes, $clientIdentifier, $resourceOwnerIdentifier, $authorizationCode),
+            $this->issueRefreshToken($scopes, $clientIdentifier, $resourceOwnerIdentifier, $authorizationCode)
         );
     }
 
-    protected function issueAccessToken(array $scope, string $clientIdentifier,
+    protected function issueAccessToken(array $scopes, string $clientIdentifier,
                                         ?string $resourceOwnerIdentifier = null, ?string $authorizationCode = null): array
     {
-        $accessToken = $this->accessTokenStorage->generate($scope, $clientIdentifier,
+        $accessToken = $this->accessTokenStorage->generate($scopes, $clientIdentifier,
             $resourceOwnerIdentifier, $authorizationCode);
 
         return [

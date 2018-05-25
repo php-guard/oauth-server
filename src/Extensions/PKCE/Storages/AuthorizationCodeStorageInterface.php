@@ -14,9 +14,9 @@ use OAuth2\Extensions\PKCE\Credentials\CodeChallengeInterface;
 
 interface AuthorizationCodeStorageInterface extends \OAuth2\Storages\AuthorizationCodeStorageInterface
 {
-    function getCodeChallenge(AuthorizationCodeInterface $authorizationCode): ?CodeChallengeInterface;
+public function getCodeChallenge(AuthorizationCodeInterface $authorizationCode): ?CodeChallengeInterface;
 
-    function associate(CodeChallengeInterface $codeChallenge, AuthorizationCodeInterface $authorizationCode);
+public function associate(CodeChallengeInterface $codeChallenge, AuthorizationCodeInterface $authorizationCode);
 
 
     public function generate(array $scopes, string $clientIdentifier, string $resourceOwnerIdentifier,

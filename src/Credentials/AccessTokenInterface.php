@@ -51,5 +51,5 @@ interface AccessTokenInterface extends TokenInterface
      * required to successfully utilize the access token to make a protected
      * resource request (along with type-specific attributes).
      */
-    function getType(): string;
+public function getType(): string;
 }

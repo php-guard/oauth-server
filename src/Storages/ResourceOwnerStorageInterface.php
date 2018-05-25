@@ -24,11 +24,11 @@ interface ResourceOwnerStorageInterface
      * It's up to you to implement this protection
      * and raise an OAuthException when an attack is detected.
      */
-    function validateCredentials(string $username, string $password): ?string;
+public function validateCredentials(string $username, string $password): ?string;
 
     /**
      * @param string $identifier
      * @return bool
      */
-    function exists(string $identifier): bool;
+public function exists(string $identifier): bool;
 }

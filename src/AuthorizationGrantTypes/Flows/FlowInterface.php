@@ -37,10 +37,10 @@ interface FlowInterface extends ResponseTypeInterface, GrantTypeInterface
     /**
      * @return string[]
      */
-    function getResponseTypes(): array;
+    public function getResponseTypes(): array;
 
     /**
      * @return string[]
      */
-    function getGrantTypes(): array;
+    public function getGrantTypes(): array;
 }

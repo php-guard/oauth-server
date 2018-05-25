@@ -29,7 +29,7 @@ interface ClientMetadataInterface
      *
      * @return array|null
      */
-    function getRedirectUris(): ?array;
+public function getRedirectUris(): ?array;
 
     /**
      * @see https://tools.ietf.org/html/rfc6749#section-2.3.1
@@ -42,70 +42,70 @@ interface ClientMetadataInterface
      *
      * @return null|string
      */
-    function getTokenEndpointAuthMethod(): ?string;
+public function getTokenEndpointAuthMethod(): ?string;
 
     /**
      * @return array|null
      */
-    function getGrantTypes(): ?array;
+public function getGrantTypes(): ?array;
 
     /**
      * @return array|null
      */
-    function getResponseTypes(): ?array;
+public function getResponseTypes(): ?array;
 
     /**
      * @return null|string
      */
-    function getClientName(): ?string;
+public function getClientName(): ?string;
 
     /**
      * @return null|string
      */
-    function getClientUri(): ?string;
+public function getClientUri(): ?string;
 
     /**
      * @return null|string
      */
-    function getLogoUri(): ?string;
+public function getLogoUri(): ?string;
 
     /**
      * @return null|string[]
      */
-    function getScopes(): ?array;
+public function getScopes(): ?array;
 
     /**
      * @return array|null
      */
-    function getContacts(): ?array;
+public function getContacts(): ?array;
 
     /**
      * @return null|string
      */
-    function getTosUri(): ?string;
+public function getTosUri(): ?string;
 
     /**
      * @return null|string
      */
-    function getPolicyUri(): ?string;
+public function getPolicyUri(): ?string;
 
     /**
      * @return null|string
      */
-    function getJwksUri(): ?string;
+public function getJwksUri(): ?string;
 
     /**
      * @return array|null
      */
-    function getJwks(): ?array;
+public function getJwks(): ?array;
 
     /**
      * @return null|string
      */
-    function getSoftwareId(): ?string;
+public function getSoftwareId(): ?string;
 
     /**
      * @return null|string
      */
-    function getSoftwareVersion(): ?string;
+public function getSoftwareVersion(): ?string;
 }

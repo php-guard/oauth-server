@@ -10,16 +10,15 @@ namespace OAuth2\ResponseModes;
 
 
 use GuzzleHttp\Psr7\Response;
-use OAuth2\Endpoints\AuthorizationEndpoint;
+
 use Psr\Http\Message\ResponseInterface;
+use Psr\Http\Message\UriInterface;
 
 class QueryResponseMode implements ResponseModeInterface
 {
-    public function buildResponse(AuthorizationEndpoint $authorizationEndpoint, array $requestData, array $responseData): ResponseInterface
+    public function buildResponse(UriInterface $redirectUri, array $responseData): ResponseInterface
     {
-        $uri = $authorizationEndpoint->getRedirectUri();
-        $uri = $uri->withQuery(http_build_query($responseData));
-
+        $uri = $redirectUri->withQuery(http_build_query($responseData));
         return new Response(302, ['Location' => $uri->__toString()]);
     }
 }

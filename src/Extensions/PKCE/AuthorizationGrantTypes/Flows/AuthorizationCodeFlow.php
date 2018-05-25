@@ -9,7 +9,8 @@
 namespace OAuth2\Extensions\PKCE\AuthorizationGrantTypes\Flows;
 
 
-use OAuth2\Endpoints\AuthorizationEndpoint;
+
+use OAuth2\Endpoints\AuthorizationRequest;
 use OAuth2\Endpoints\TokenEndpoint;
 use OAuth2\Exceptions\OAuthException;
 use OAuth2\Extensions\PKCE\Credentials\CodeChallenge;
@@ -48,14 +49,13 @@ class AuthorizationCodeFlow extends \OAuth2\AuthorizationGrantTypes\Flows\Author
     }
 
     /**
-     * @param AuthorizationEndpoint $authorizationEndpoint
-     * @param array                 $requestData
+     * @param AuthorizationRequest $authorizationRequest
      * @return array
      * @throws OAuthException
      */
-    function handleAuthorizationRequest(AuthorizationEndpoint $authorizationEndpoint, array $requestData): array
+public function handleAuthorizationRequest(AuthorizationRequest $authorizationRequest): array
     {
-        $authorizationCode = $this->createAuthorizationCode($authorizationEndpoint);
+        $authorizationCode = $this->createAuthorizationCode($authorizationRequest);
 
         if (empty($requestData['code_challenge'])) {
             if ($authorizationEndpoint->getClient() instanceof PublicClient) {

@@ -10,7 +10,7 @@ namespace OAuth2\AuthorizationGrantTypes\Flows;
 
 
 use OAuth2\Credentials\AuthorizationCode;
-use OAuth2\Endpoints\AuthorizationEndpoint;
+use OAuth2\Endpoints\AuthorizationRequest;
 use OAuth2\Endpoints\TokenEndpoint;
 use OAuth2\Exceptions\OAuthException;
 use OAuth2\AuthorizationGrantTypes\AbstractGrantType;
@@ -79,65 +79,9 @@ class AuthorizationCodeFlow extends AbstractGrantType implements FlowInterface
         return ['code'];
     }
 
-    /**
-     * @param AuthorizationEndpoint $authorizationEndpoint
-     * @param array $requestData
-     *
-     * @see https://tools.ietf.org/html/rfc6749#section-4.1.1
-     * The client constructs the request URI by adding the following
-     * parameters to the query component of the authorization endpoint URI
-     * using the "application/x-www-form-urlencoded" format, per Appendix B:
-     *
-     * response_type
-     * REQUIRED.  Value MUST be set to "code".
-     *
-     * client_id
-     * REQUIRED.  The client identifier as described in Section 2.2.
-     *
-     * redirect_uri
-     * OPTIONAL.  As described in Section 3.1.2.
-     *
-     * scope
-     * OPTIONAL.  The scope of the access request as described by
-     * Section 3.3.
-     *
-     * state
-     * RECOMMENDED.  An opaque value used by the client to maintain
-     * state between the request and callback.  The authorization
-     * server includes this value when redirecting the user-agent back
-     * to the client.  The parameter SHOULD be used for preventing
-     * cross-site request forgery as described in Section 10.12.
-     *
-     * The client directs the resource owner to the constructed URI using an
-     * HTTP redirection response, or by other means available to it via the
-     * user-agent.
-     *
-     * For example, the client directs the user-agent to make the following
-     * HTTP request using TLS (with extra line breaks for display purposes
-     * only):
-     *
-     * GET /authorize?response_type=code&client_id=s6BhdRkqt3&state=xyz
-     * &redirect_uri=https%3A%2F%2Fclient%2Eexample%2Ecom%2Fcb HTTP/1.1
-     * Host: server.example.com
-     *
-     * The authorization server validates the request to ensure that all
-     * required parameters are present and valid.  If the request is valid,
-     * the authorization server authenticates the resource owner and obtains
-     * an authorization decision (by asking the resource owner or by
-     * establishing approval via other means).
-     *
-     * When a decision is established, the authorization server directs the
-     * user-agent to the provided client redirection URI using an HTTP
-     * redirection response, or by other means available to it via the
-     * user-agent.
-     */
-    public function verifyAuthorizationRequest(AuthorizationEndpoint $authorizationEndpoint, array $requestData)
-    {
-    }
 
     /**
-     * @param AuthorizationEndpoint $authorizationEndpoint
-     * @param array $requestData
+     * @param AuthorizationRequest $authorizationRequest
      * @return array
      *
      * @see https://tools.ietf.org/html/rfc6749#section-4.1.2
@@ -177,14 +121,14 @@ class AuthorizationCodeFlow extends AbstractGrantType implements FlowInterface
      * value sizes.  The authorization server SHOULD document the size of
      * any value it issues.
      */
-    public function handleAuthorizationRequest(AuthorizationEndpoint $authorizationEndpoint, array $requestData): array
+    public function handleAuthorizationRequest(AuthorizationRequest $authorizationRequest): array
     {
         $this->authorizationCode = $this->authorizationCodeStorage->generate(
-            $authorizationEndpoint->getScopes(),
-            $authorizationEndpoint->getClient()->getIdentifier(),
-            $authorizationEndpoint->getResourceOwner()->getIdentifier(),
-            $authorizationEndpoint->getRequestedScopes(),
-            $requestData['redirect_uri'] ?? null
+            $authorizationRequest->getScopes(),
+            $authorizationRequest->getClient()->getIdentifier(),
+            $authorizationRequest->getResourceOwner()->getIdentifier(),
+            $authorizationRequest->getRequestedScopes(),
+            $authorizationRequest->getData()['redirect_uri'] ?? null
         );
         return ['code' => $this->authorizationCode->getCode()];
     }
@@ -197,6 +141,11 @@ class AuthorizationCodeFlow extends AbstractGrantType implements FlowInterface
     public function getUnsupportedResponseModes(): array
     {
         return [];
+    }
+
+    public function isRegistrationOfRedirectUriRequired(): bool
+    {
+        return false;
     }
 
     /**

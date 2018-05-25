@@ -64,31 +64,32 @@ class ScopePolicyManager
         $this->config = $config;
     }
 
-    public static function scopeStringToArray(?string $scopes) {
+    /**
+     * @see https://tools.ietf.org/html/rfc6749#section-3.3
+     * The value of the scope parameter is expressed as a list of space-
+     * delimited, case-sensitive strings.  The strings are defined by the
+     * authorization server.  If the value contains multiple space-delimited
+     * strings, their order does not matter, and each string adds an
+     * additional access range to the requested scope.
+     *
+     * scope       = scope-token *( SP scope-token )
+     * scope-token = 1*( %x21 / %x23-5B / %x5D-7E )
+     *
+     * @param null|string $scopes
+     * @return array|null
+     */
+    public function scopeStringToArray(?string $scopes): ?array {
         return empty(trim($scopes)) ? null : array_filter(explode(' ', $scopes));
     }
 
     /**
      * @param ClientInterface $client
-     * @param null|string $scopes
      * @param array|null $requestedScopes
      * @return array|null
      * @throws OAuthException
      */
-    public function getScopes(ClientInterface $client, ?string $scopes, ?array &$requestedScopes = null): array
+    public function getScopes(ClientInterface $client, ?array $requestedScopes): array
     {
-        /**
-         * @see https://tools.ietf.org/html/rfc6749#section-3.3
-         * The value of the scope parameter is expressed as a list of space-
-         * delimited, case-sensitive strings.  The strings are defined by the
-         * authorization server.  If the value contains multiple space-delimited
-         * strings, their order does not matter, and each string adds an
-         * additional access range to the requested scope.
-         *
-         * scope       = scope-token *( SP scope-token )
-         * scope-token = 1*( %x21 / %x23-5B / %x5D-7E )
-         */
-        $requestedScopes = self::scopeStringToArray($scopes);
         $scopes = $this->config->getScopePolicy()->getScopes($client, $requestedScopes);
 
         if (empty($scopes)) {

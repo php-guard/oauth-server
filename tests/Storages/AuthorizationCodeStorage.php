@@ -31,6 +31,15 @@ class AuthorizationCodeStorage implements AuthorizationCodeStorageInterface,
         unset($this->codes[$code]);
     }
 
+    /**
+     * @param array $scopes
+     * @param string $clientIdentifier
+     * @param string $resourceOwnerIdentifier
+     * @param array|null $requestedScopes
+     * @param null|string $redirectUri
+     * @return AuthorizationCodeInterface
+     * @throws \Exception
+     */
     public function generate(array $scopes, string $clientIdentifier, string $resourceOwnerIdentifier,
                              ?array $requestedScopes, ?string $redirectUri): AuthorizationCodeInterface
     {

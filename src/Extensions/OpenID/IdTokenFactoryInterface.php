@@ -11,7 +11,7 @@ namespace OAuth2;
 
 interface IdTokenFactoryInterface
 {
-    function create(): IdTokenInterface;
+public function create(): IdTokenInterface;
 
     /**
      * REQUIRED. Issuer Identifier for the Issuer of the response.
@@ -20,7 +20,7 @@ interface IdTokenFactoryInterface
      * @param $iss
      * @return IdTokenFactoryInterface
      */
-    function setIssClaim($iss): self;
+public function setIssClaim($iss): self;
 
     /**
      * REQUIRED. Subject Identifier.
@@ -30,7 +30,7 @@ interface IdTokenFactoryInterface
      * @param $sub
      * @return IdTokenFactoryInterface
      */
-    function setSubClaim($sub): self;
+public function setSubClaim($sub): self;
 
     /**
      * REQUIRED. Audience(s) that this ID Token is intended for.
@@ -41,7 +41,7 @@ interface IdTokenFactoryInterface
      * @param $aud
      * @return IdTokenFactoryInterface
      */
-    function setAudClaim($aud): self;
+public function setAudClaim($aud): self;
 
     /**
      * REQUIRED. Expiration time on or after which the ID Token MUST NOT be accepted for processing.
@@ -54,7 +54,7 @@ interface IdTokenFactoryInterface
      * @param $exp
      * @return IdTokenFactoryInterface
      */
-    function setExpClaim($exp): self;
+public function setExpClaim($exp): self;
 
     /**
      * REQUIRED. Time at which the JWT was issued.
@@ -63,7 +63,7 @@ interface IdTokenFactoryInterface
      * @param $iat
      * @return IdTokenFactoryInterface
      */
-    function setIat($iat): self;
+public function setIat($iat): self;
 
     /**
      * Time when the End-User authentication occurred.
@@ -75,7 +75,7 @@ interface IdTokenFactoryInterface
      * @param $authTime
      * @return IdTokenFactoryInterface
      */
-    function setAuthTime($authTime): self;
+public function setAuthTime($authTime): self;
 
     /**
      * String value used to associate a Client session with an ID Token, and to mitigate replay attacks.
@@ -88,7 +88,7 @@ interface IdTokenFactoryInterface
      * @param $nonce
      * @return IdTokenFactoryInterface
      */
-    function setNonce($nonce): self;
+public function setNonce($nonce): self;
 
     /**
      * OPTIONAL. Authentication Context Class Reference.
@@ -105,7 +105,7 @@ interface IdTokenFactoryInterface
      * @param $acr
      * @return IdTokenFactoryInterface
      */
-    function setAcr($acr): self;
+public function setAcr($acr): self;
 
     /**
      * OPTIONAL. Authentication Methods References.
@@ -117,7 +117,7 @@ interface IdTokenFactoryInterface
      * @param $amr
      * @return IdTokenFactoryInterface
      */
-    function setAmr($amr): self;
+public function setAmr($amr): self;
 
     /**
      * OPTIONAL. Authorized party - the party to which the ID Token was issued.
@@ -129,5 +129,5 @@ interface IdTokenFactoryInterface
      * @param $azp
      * @return IdTokenFactoryInterface
      */
-    function setAzp($azp): self;
+public function setAzp($azp): self;
 }

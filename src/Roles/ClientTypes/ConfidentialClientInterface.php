@@ -23,5 +23,5 @@ use OAuth2\Roles\ClientInterface;
  */
 interface ConfidentialClientInterface extends ClientInterface
 {
-    function getPassword(): string;
+public function getPassword(): string;
 }

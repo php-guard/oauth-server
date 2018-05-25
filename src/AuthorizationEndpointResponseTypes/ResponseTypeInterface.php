@@ -10,6 +10,7 @@ namespace OAuth2\AuthorizationEndpointResponseTypes;
 
 
 use OAuth2\Endpoints\AuthorizationEndpoint;
+use OAuth2\Endpoints\AuthorizationRequest;
 
 /**
  * Interface ResponseTypeInterface
@@ -44,11 +45,10 @@ interface ResponseTypeInterface
      * @param array $requestData
      * @return mixed
      */
-    function verifyAuthorizationRequest(AuthorizationEndpoint $authorizationEndpoint, array $requestData);
+//    public function verifyAuthorizationRequest(AuthorizationEndpoint $authorizationEndpoint, array $requestData);
 
     /**
-     * @param AuthorizationEndpoint $authorizationEndpoint
-     * @param array $requestData
+     * @param AuthorizationRequest $authorizationRequest
      * @return array
      *
      * @see https://tools.ietf.org/html/rfc6749#section-4.1.2
@@ -131,9 +131,11 @@ interface ResponseTypeInterface
      * HTTP/1.1 302 Found
      * Location: https://client.example.com/cb?error=access_denied&state=xyz
      */
-    function handleAuthorizationRequest(AuthorizationEndpoint $authorizationEndpoint, array $requestData): array;
+    public function handleAuthorizationRequest(AuthorizationRequest $authorizationRequest): array;
 
-    function getDefaultResponseMode(): string;
+    public function getDefaultResponseMode(): string;
 
-    function getUnsupportedResponseModes(): array;
+    public function getUnsupportedResponseModes(): array;
+
+    public function isRegistrationOfRedirectUriRequired(): bool;
 }

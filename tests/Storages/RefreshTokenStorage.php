@@ -22,12 +22,12 @@ class RefreshTokenStorage implements RefreshTokenStorageInterface
      */
     protected $tokens = [];
 
-    function get(string $token): ?TokenInterface
+public function get(string $token): ?TokenInterface
     {
         return $this->tokens[$token] ?? null;
     }
 
-    function revoke(string $token)
+public function revoke(string $token)
     {
         unset($this->tokens[$token]);
     }
@@ -40,7 +40,7 @@ class RefreshTokenStorage implements RefreshTokenStorageInterface
      * @return RefreshTokenInterface
      * @throws \Exception
      */
-    function generate(array $scopes, string $clientIdentifier,
+public function generate(array $scopes, string $clientIdentifier,
                       ?string $resourceOwnerIdentifier = null, ?string $authorizationCode = null): TokenInterface
     {
         $expiresAt = new \DateTime('now', new \DateTimeZone('UTC'));
@@ -52,13 +52,13 @@ class RefreshTokenStorage implements RefreshTokenStorageInterface
         return $refreshToken;
     }
 
-    function hasExpired(TokenInterface $refreshToken): bool
+public function hasExpired(TokenInterface $refreshToken): bool
     {
         $now = new \DateTime('now', new \DateTimeZone('UTC'));
         return $now > $refreshToken->getExpiresAt();
     }
 
-    function getLifetime(): ?int
+public function getLifetime(): ?int
     {
         return 3600 * 24 * 7;
     }
@@ -67,7 +67,7 @@ class RefreshTokenStorage implements RefreshTokenStorageInterface
      * @param string $code
      * @return TokenInterface[]|null
      */
-    function getByAuthorizationCode(string $code): array
+public function getByAuthorizationCode(string $code): array
     {
         $tokens = [];
         foreach ($this->tokens as $token) {
@@ -78,7 +78,7 @@ class RefreshTokenStorage implements RefreshTokenStorageInterface
         return $tokens;
     }
 
-    function getSize(): ?int
+public function getSize(): ?int
     {
         return 20;
     }

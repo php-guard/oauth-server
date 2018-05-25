@@ -13,9 +13,9 @@ use OAuth2\Credentials\AuthorizationCodeInterface;
 
 interface AuthorizationCodeStorageInterface
 {
-    function get(string $code): ?AuthorizationCodeInterface;
+public function get(string $code): ?AuthorizationCodeInterface;
 
-    function revoke(string $code): void;
+public function revoke(string $code): void;
 
     /**
      * @param array $scopes
@@ -27,10 +27,10 @@ interface AuthorizationCodeStorageInterface
      *
      *
      */
-    function generate(array $scopes, string $clientIdentifier, string $resourceOwnerIdentifier,
+public function generate(array $scopes, string $clientIdentifier, string $resourceOwnerIdentifier,
                       ?array $requestedScopes, ?string $redirectUri): AuthorizationCodeInterface;
 
-//    function save(AuthorizationCodeInterface $authorizationCode);
+//public function save(AuthorizationCodeInterface $authorizationCode);
 
     /**
      * @param AuthorizationCodeInterface $authorizationCode
@@ -42,7 +42,7 @@ interface AuthorizationCodeStorageInterface
      * maximum authorization code lifetime of 10 minutes is
      * RECOMMENDED.
      */
-    function hasExpired(AuthorizationCodeInterface $authorizationCode): bool;
+public function hasExpired(AuthorizationCodeInterface $authorizationCode): bool;
 
     /**
      * @return int|null
@@ -53,5 +53,5 @@ interface AuthorizationCodeStorageInterface
      * value sizes.  The authorization server SHOULD document the size of
      * any value it issues.
      */
-    function getSize(): ?int;
+public function getSize(): ?int;
 }

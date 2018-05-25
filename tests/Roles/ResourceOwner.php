@@ -10,7 +10,8 @@ namespace OAuth2\Tests\Roles;
 
 
 use GuzzleHttp\Psr7\Response;
-use OAuth2\Extensions\OpenID\Endpoints\AuthorizationEndpoint;
+use OAuth2\Endpoints\AuthorizationRequest;
+
 use OAuth2\Extensions\OpenID\Roles\ResourceOwnerInterface;
 use OAuth2\Roles\ClientInterface;
 use Psr\Http\Message\ResponseInterface;
@@ -49,7 +50,7 @@ class ResourceOwner implements ResourceOwnerInterface
         return $scopes;
     }
 
-    public function obtainConsent(\OAuth2\Endpoints\AuthorizationEndpoint $authorizationEndpoint, array $requestData): ResponseInterface
+    public function obtainConsent(AuthorizationRequest $authorizationRequest): ResponseInterface
     {
        return new Response();
     }
@@ -59,12 +60,12 @@ class ResourceOwner implements ResourceOwnerInterface
         return null;
     }
 
-    public function isInteractionRequiredForConsent(AuthorizationEndpoint $authorizationEndpoint): bool
+    public function isInteractionRequiredForConsent(AuthorizationRequest $authorizationRequest): bool
     {
-        return !$authorizationEndpoint->getClient()->hasCredentials();
+        return !$authorizationRequest->getClient()->hasCredentials();
     }
 
-    function getAuthenticationContextClassReference()
+public function getAuthenticationContextClassReference()
     {
         return null;
     }
@@ -74,7 +75,7 @@ class ResourceOwner implements ResourceOwnerInterface
         return null;
     }
 
-    function getClaims(array $scopes): array
+public function getClaims(array $scopes): array
     {
         if(in_array('email', $scopes)) {
             return ['email' => 'phpunit@oauth-server.com'];

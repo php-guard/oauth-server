@@ -11,7 +11,7 @@ namespace OAuth2\Extensions\PKCE\Credentials;
 
 interface CodeChallengeInterface
 {
-    function getCodeChallenge(): string;
+public function getCodeChallenge(): string;
 
-    function getCodeChallengeMethod(): string;
+public function getCodeChallengeMethod(): string;
 }

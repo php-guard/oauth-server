@@ -35,17 +35,17 @@ namespace OAuth2\Credentials;
  */
 interface AuthorizationCodeInterface
 {
-    function getCode(): string;
+public function getCode(): string;
 
-    function getScopes(): array;
+public function getScopes(): array;
 
-    function getClientIdentifier(): string;
+public function getClientIdentifier(): string;
 
-    function getResourceOwnerIdentifier(): string;
+public function getResourceOwnerIdentifier(): string;
 
-    function getExpiresAt(): \DateTimeInterface;
+public function getExpiresAt(): \DateTimeInterface;
 
-    function getRequestedScopes(): ?array;
+public function getRequestedScopes(): ?array;
 
-    function getRedirectUri(): ?string;
+public function getRedirectUri(): ?string;
 }

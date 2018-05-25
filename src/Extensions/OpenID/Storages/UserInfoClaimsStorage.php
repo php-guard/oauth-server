@@ -9,11 +9,12 @@
 namespace OAuth2OLD\OpenID\Storages;
 
 
+use OAuth2\Roles\ResourceOwnerInterface;
 use OAuth2OLD\OpenID\Models\StandardClaims;
 use OAuth2OLD\Roles\ResourceOwnerInterface;
 use OAuth2OLD\Storages\StorageInterface;
 
-interface UserInfoClaimsStorage extends StorageInterface
+interface UserInfoClaimsStorage
 {
     const PROFILE_CLAIMS = ['name', 'given_name', 'family_name', 'middle_name', 'nickname', 'preferred_username',
         'profile', 'picture', 'website', 'gender', 'birthdate', 'zoneinfo', 'locale', 'updated_at'];

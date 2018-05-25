@@ -9,7 +9,7 @@
 namespace OAuth2\AuthorizationGrantTypes\Flows;
 
 
-use OAuth2\Endpoints\AuthorizationEndpoint;
+use OAuth2\Endpoints\AuthorizationRequest;
 use OAuth2\Endpoints\TokenEndpoint;
 use OAuth2\Exceptions\OAuthException;
 use OAuth2\AuthorizationGrantTypes\AbstractGrantType;
@@ -128,7 +128,9 @@ class ClientCredentialsFlow extends AbstractGrantType implements FlowInterface
                 'https://tools.ietf.org/html/rfc6749#section-4.4');
         }
 
-        $scopes = $this->scopePolicyManager->getScopes($tokenEndpoint->getClient(), $requestData['scope'] ?? null, $requestedScopes);
+
+        $requestedScopes = $this->scopePolicyManager->scopeStringToArray($requestData['scope'] ?? null);
+        $scopes = $this->scopePolicyManager->getScopes($tokenEndpoint->getClient(), $requestedScopes);
 
         $responseData = $this->issueAccessToken($scopes, $tokenEndpoint->getClient()->getIdentifier(), null);
 
@@ -146,15 +148,15 @@ class ClientCredentialsFlow extends AbstractGrantType implements FlowInterface
         return $responseData;
     }
 
-    public function handleAuthorizationRequest(AuthorizationEndpoint $authorizationEndpoint, array $requestData): array
+    public function handleAuthorizationRequest(AuthorizationRequest $authorizationRequest): array
     {
         throw new \BadMethodCallException();
     }
 
-    public function verifyAuthorizationRequest(AuthorizationEndpoint $authorizationEndpoint, array $requestData)
-    {
-        throw new \BadMethodCallException();
-    }
+//    public function verifyAuthorizationRequest(AuthorizationEndpoint $authorizationEndpoint, array $requestData)
+//    {
+//        throw new \BadMethodCallException();
+//    }
 
     public function getDefaultResponseMode(): string
     {
@@ -162,6 +164,11 @@ class ClientCredentialsFlow extends AbstractGrantType implements FlowInterface
     }
 
     public function getUnsupportedResponseModes(): array
+    {
+        throw new \BadMethodCallException();
+    }
+
+    public function isRegistrationOfRedirectUriRequired(): bool
     {
         throw new \BadMethodCallException();
     }

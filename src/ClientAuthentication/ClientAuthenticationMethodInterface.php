@@ -13,7 +13,7 @@ use Psr\Http\Message\ServerRequestInterface;
 
 interface ClientAuthenticationMethodInterface
 {
-    function support(ServerRequestInterface $request, array $requestData): bool;
+public function support(ServerRequestInterface $request, array $requestData): bool;
 
-    function authenticate(ServerRequestInterface $request, array $requestData): ?ClientInterface;
+public function authenticate(ServerRequestInterface $request, array $requestData): ?ClientInterface;
 }

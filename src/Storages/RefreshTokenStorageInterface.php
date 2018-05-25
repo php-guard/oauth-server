@@ -17,7 +17,7 @@ interface RefreshTokenStorageInterface extends TokenStorageInterface
      * @param string $token
      * @return null|RefreshTokenInterface
      */
-    function get(string $token): ?TokenInterface;
+public function get(string $token): ?TokenInterface;
 
     /**
      * @param array $scopes
@@ -26,6 +26,6 @@ interface RefreshTokenStorageInterface extends TokenStorageInterface
      * @param null|string $authorizationCode
      * @return RefreshTokenInterface
      */
-    function generate(array $scopes, string $clientIdentifier, ?string $resourceOwnerIdentifier = null,
+public function generate(array $scopes, string $clientIdentifier, ?string $resourceOwnerIdentifier = null,
         ?string $authorizationCode = null): TokenInterface;
 }

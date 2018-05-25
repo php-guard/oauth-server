@@ -9,7 +9,7 @@
 namespace OAuth2;
 
 
-use OAuth2\ScopePolicy\Policies\DefaultScopePolicy;
+
 use OAuth2\ScopePolicy\Policies\ScopePolicyInterface;
 
 class Config

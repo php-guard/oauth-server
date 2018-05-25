@@ -18,84 +18,84 @@ interface ClientMetadataInterface extends \OAuth2\Roles\ClientTypes\ClientMetada
     /**
      * @return null|string
      */
-    function getApplicationType(): ?string;
+public function getApplicationType(): ?string;
     /**
      * @return null|string
      */
-    function getSectorIdentifierUri(): ?string;
+public function getSectorIdentifierUri(): ?string;
 
     /**
      * @return null|string
      */
-    function getSubjectType(): ?string;
+public function getSubjectType(): ?string;
 
     /**
      * @return null|string
      */
-    function getIdTokenSignedResponseAlg(): ?string;
+public function getIdTokenSignedResponseAlg(): ?string;
 
     /**
      * @return null|string
      */
-    function getIdTokenEncryptedResponseAlg(): ?string;
+public function getIdTokenEncryptedResponseAlg(): ?string;
     /**
      * @return null|string
      */
-    function getIdTokenEncryptedResponseEnc(): ?string;
+public function getIdTokenEncryptedResponseEnc(): ?string;
     /**
      * @return null|string
      */
-    function getUserinfoSignedResponseAlg(): ?string;
+public function getUserinfoSignedResponseAlg(): ?string;
     /**
      * @return null|string
      */
-    function getUserinfoEncryptedResponseAlg(): ?string;
+public function getUserinfoEncryptedResponseAlg(): ?string;
     /**
      * @return null|string
      */
-    function getUserinfoEncryptedResponseEnc(): ?string;
+public function getUserinfoEncryptedResponseEnc(): ?string;
 
     /**
      * @return null|string
      */
-    function getRequestObjectSigningAlg(): ?string;
+public function getRequestObjectSigningAlg(): ?string;
 
     /**
      * @return null|string
      */
-    function getRequestObjectEncryptionAlg(): ?string;
+public function getRequestObjectEncryptionAlg(): ?string;
 
     /**
      * @return null|string
      */
-    function getRequestObjectEncryptionEnc(): ?string;
+public function getRequestObjectEncryptionEnc(): ?string;
 
     /**
      * @return null|string
      */
-    function getTokenEndpointAuthSigningAlg(): ?string;
+public function getTokenEndpointAuthSigningAlg(): ?string;
 
     /**
      * @return int|null
      */
-    function getDefaultMaxAge(): ?int;
+public function getDefaultMaxAge(): ?int;
     /**
      * @return bool|null
      */
-    function getRequireAuthTime(): ?bool;
+public function getRequireAuthTime(): ?bool;
 
     /**
      * @return null|string[]
      */
-    function getDefaultAcrValues(): ?array;
+public function getDefaultAcrValues(): ?array;
 
     /**
      * @return null|string
      */
-    function getInitiateLoginUri(): ?string;
+public function getInitiateLoginUri(): ?string;
 
     /**
      * @return null|string[]
      */
-    function getRequestUris(): ?array;
+public function getRequestUris(): ?array;
 }
