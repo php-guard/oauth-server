@@ -63,6 +63,7 @@ class Server
         // response_type : code
         // grant_type : authorization_code
         $authorizationCodeFlow = new AuthorizationCodeFlow(
+            $config,
             $storageManager->getAuthorizationCodeStorage(),
             $storageManager->getAccessTokenStorage(),
             $storageManager->getRefreshTokenStorage()
