@@ -12,6 +12,7 @@ namespace OAuth2\Endpoints;
 use GuzzleHttp\Psr7\Uri;
 use OAuth2\AuthorizationEndpointResponseTypes\ResponseTypeInterface;
 use OAuth2\AuthorizationEndpointResponseTypes\ResponseTypeManager;
+use OAuth2\Exceptions\InvalidAuthorizationRequest;
 use OAuth2\Exceptions\InvalidRequestMethod;
 use OAuth2\Exceptions\OAuthException;
 use OAuth2\ResponseModes\ResponseModeInterface;
@@ -23,7 +24,7 @@ use OAuth2\Roles\ResourceOwnerInterface;
 use OAuth2\ScopePolicy\ScopePolicyManager;
 use OAuth2\Storages\ClientStorageInterface;
 use Psr\Http\Message\ServerRequestInterface;
-use Psr\Http\Message\UriInterface;
+
 
 class AuthorizationRequestBuilder
 {
@@ -58,14 +59,12 @@ class AuthorizationRequestBuilder
     /**
      * @param ServerRequestInterface $request
      * @param ResourceOwnerInterface $resourceOwner
-     * @param null|UriInterface $redirectUri
-     * @param null|ResponseModeInterface $responseMode
      * @return AuthorizationRequest
      * @throws InvalidRequestMethod
      * @throws OAuthException
+     * @throws InvalidAuthorizationRequest
      */
-    public function build(ServerRequestInterface $request, ResourceOwnerInterface $resourceOwner,
-                          ?UriInterface &$redirectUri = null, ?ResponseModeInterface &$responseMode = null)
+    public function build(ServerRequestInterface $request, ResourceOwnerInterface $resourceOwner)
     {
         if ($request->getMethod() === 'GET') {
             $data = $request->getQueryParams();
@@ -79,10 +78,14 @@ class AuthorizationRequestBuilder
         $responseType = $this->getResponseType($client, $data['response_type'] ?? null);
         $redirectUri = $this->getRedirectUri($client, $responseType, $data['redirect_uri'] ?? null);
         $responseMode = $this->getResponseMode($responseType, $data['response_mode'] ?? null);
-
-        $requestedScopes = $this->scopePolicyManager->scopeStringToArray($data['scope'] ?? null);
-        $scopes = $this->scopePolicyManager->getScopes($client, $requestedScopes);
         $state = $requestData['state'] ?? null;
+
+        try {
+            $requestedScopes = $this->scopePolicyManager->scopeStringToArray($data['scope'] ?? null);
+            $scopes = $this->scopePolicyManager->getScopes($client, $requestedScopes);
+        } catch (OAuthException $e) {
+            throw new InvalidAuthorizationRequest($e, $redirectUri, $responseMode, $state);
+        }
 
         return new AuthorizationRequest($data, $resourceOwner, $client, $redirectUri, $responseType, $responseMode,
             $scopes, $requestedScopes, $state);
@@ -108,6 +111,34 @@ class AuthorizationRequestBuilder
         return $client;
     }
 
+    protected function isRedirectUriRegistrationRequired(RegisteredClient $client, ResponseTypeInterface $responseType)
+    {
+        if ($client instanceof PublicClientInterface ||
+            ($client instanceof ConfidentialClientInterface && $responseType->isRegistrationOfRedirectUriRequired())) {
+            return true;
+        }
+        return false;
+    }
+
+    /**
+     * @param RegisteredClient $client
+     * @param ResponseTypeInterface $responseType
+     * @return array|null
+     * @throws OAuthException
+     */
+    protected function getRegisteredRedirectUris(RegisteredClient $client, ResponseTypeInterface $responseType)
+    {
+        $redirectUris = $client->getMetadata()->getRedirectUris();
+
+        if (empty($redirectUris) && $this->isRedirectUriRegistrationRequired($client, $responseType)) {
+            throw new OAuthException('invalid_request',
+                'Clients using flows with redirection MUST register their redirection URI values',
+                'https://tools.ietf.org/html/rfc7591#section-2.1');
+        }
+
+        return $redirectUris;
+    }
+
     /**
      * @param RegisteredClient $client
      * @param ResponseTypeInterface $responseType
@@ -118,29 +149,20 @@ class AuthorizationRequestBuilder
     protected function getRedirectUri(RegisteredClient $client, ResponseTypeInterface $responseType,
                                       ?string $requestRedirectUri = null)
     {
-        $redirectUris = $client->getMetadata()->getRedirectUris();
-        if (empty($redirectUris)) {
-            if ($client instanceof PublicClientInterface ||
-                ($client instanceof ConfidentialClientInterface && $responseType->isRegistrationOfRedirectUriRequired()))
+        $registeredRedirectUris = $this->getRegisteredRedirectUris($client, $responseType);
+
+        if (!$requestRedirectUri) {
+            if (count($registeredRedirectUris) != 1) {
                 throw new OAuthException('invalid_request',
-                    'Clients using flows with redirection MUST register their redirection URI values',
-                    'https://tools.ietf.org/html/rfc7591#section-2.1');
-        } else {
-            if ($requestRedirectUri) {
-                if (!in_array($requestRedirectUri, $redirectUris)) {
-                    throw new OAuthException('invalid_request',
-                        'The request includes the invalid parameter redirect_uri.',
-                        'https://tools.ietf.org/html/rfc6749#section-4.1');
-                }
-            } else {
-                if (count($redirectUris) == 1) {
-                    $requestRedirectUri = $redirectUris[0];
-                } else {
-                    throw new OAuthException('invalid_request',
-                        'The request is missing the required parameter redirect_uri.',
-                        'https://tools.ietf.org/html/rfc6749#section-4.1');
-                }
+                    'The request is missing the required parameter redirect_uri.',
+                    'https://tools.ietf.org/html/rfc6749#section-4.1');
             }
+
+            $requestRedirectUri = $registeredRedirectUris[0];
+        } else if (!empty($registeredRedirectUris) && !in_array($requestRedirectUri, $registeredRedirectUris)) {
+            throw new OAuthException('invalid_request',
+                'The request is missing the required parameter redirect_uri.',
+                'https://tools.ietf.org/html/rfc6749#section-4.1');
         }
 
         try {
@@ -148,12 +170,13 @@ class AuthorizationRequestBuilder
             if ($redirectUri->getFragment()) {
                 throw new \InvalidArgumentException('The endpoint URI must not include a fragment component.');
             }
-            return $redirectUri;
         } catch (\InvalidArgumentException $e) {
             throw new OAuthException('invalid_request',
                 'The request includes the malformed parameter redirect_uri. ' . $e->getMessage(),
                 'https://tools.ietf.org/html/rfc6749#section-4.1');
         }
+
+        return $redirectUri;
     }
 
     /**

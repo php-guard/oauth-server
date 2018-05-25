@@ -9,7 +9,9 @@
 namespace OAuth2\AuthorizationGrantTypes\Flows;
 
 
+use OAuth2\Config;
 use OAuth2\Credentials\AuthorizationCode;
+use OAuth2\Credentials\AuthorizationCodeInterface;
 use OAuth2\Endpoints\AuthorizationRequest;
 use OAuth2\Endpoints\TokenEndpoint;
 use OAuth2\Exceptions\OAuthException;
@@ -58,19 +60,25 @@ class AuthorizationCodeFlow extends AbstractGrantType implements FlowInterface
      * @var AuthorizationCode
      */
     protected $authorizationCode;
+    /**
+     * @var Config
+     */
+    private $config;
 
-    public function __construct(AuthorizationCodeStorageInterface $authorizationCodeStorage,
+    public function __construct(Config $config,
+                                AuthorizationCodeStorageInterface $authorizationCodeStorage,
                                 AccessTokenStorageInterface $accessTokenStorage,
                                 RefreshTokenStorageInterface $refreshTokenStorage)
     {
         parent::__construct($accessTokenStorage, $refreshTokenStorage);
         $this->authorizationCodeStorage = $authorizationCodeStorage;
+        $this->config = $config;
     }
 
     /**
      * @return array
      *
-     * @see https://tools.ietf.org/html/rfc6749#section-4.1.1     *
+     * @see https://tools.ietf.org/html/rfc6749#section-4.1.1
      * response_type
      * REQUIRED.  Value MUST be set to "code".
      */
@@ -239,7 +247,7 @@ class AuthorizationCodeFlow extends AbstractGrantType implements FlowInterface
         }
         $code = $requestData['code'];
 
-        // Todo, config should revoke tokens previously issued when authorization code is reused
+
         /**
          * @see https://tools.ietf.org/html/rfc6749#section-4.1.2
          * If an authorization code is used more than
@@ -247,11 +255,13 @@ class AuthorizationCodeFlow extends AbstractGrantType implements FlowInterface
          * revoke (when possible) all tokens previously issued based on
          * that authorization code.
          */
-        foreach ($this->accessTokenStorage->getByAuthorizationCode($code) as $token) {
-            $this->accessTokenStorage->revoke($token);
-        }
-        foreach ($this->refreshTokenStorage->getByAuthorizationCode($code) as $token) {
-            $this->refreshTokenStorage->revoke($token);
+        if ($this->config->shouldRevokeTokensWhenAuthorizationCodeIsReused()) {
+            foreach ($this->accessTokenStorage->getByAuthorizationCode($code) as $token) {
+                $this->accessTokenStorage->revoke($token);
+            }
+            foreach ($this->refreshTokenStorage->getByAuthorizationCode($code) as $token) {
+                $this->refreshTokenStorage->revoke($token);
+            }
         }
 
         $this->authorizationCode = $this->authorizationCodeStorage->get($code);
@@ -287,23 +297,10 @@ class AuthorizationCodeFlow extends AbstractGrantType implements FlowInterface
                 'https://tools.ietf.org/html/rfc7636#section-4.4');
         }
 
-        /**
-         * ensure that the "redirect_uri" parameter is present if the
-         * "redirect_uri" parameter was included in the initial authorization
-         * request as described in Section 4.1.1, and if included ensure that
-         * their values are identical.
-         */
-        if ($this->authorizationCode->getRedirectUri()) {
-            if (empty($requestData['redirect_uri'])) {
-                throw new OAuthException('invalid_request',
-                    'The request is missing the required parameter redirect_uri',
-                    'https://tools.ietf.org/html/rfc7636#section-4.1');
-            }
-            if ($requestData['redirect_uri'] !== $this->authorizationCode->getRedirectUri()) {
-                throw new OAuthException('invalid_request',
-                    'The request includes the invalid parameter redirect_uri',
-                    'https://tools.ietf.org/html/rfc7636#section-4.1');
-            }
+        if (!$this->isRedirectUriValid($this->authorizationCode, $requestData['redirect_uri'] ?? null)) {
+            throw new OAuthException('invalid_request',
+                'The request is missing the required parameter redirect_uri',
+                'https://tools.ietf.org/html/rfc7636#section-4.1');
         }
 
         $responseData = $this->issueTokens(
@@ -332,5 +329,23 @@ class AuthorizationCodeFlow extends AbstractGrantType implements FlowInterface
     protected function getAuthorizationCode(): AuthorizationCode
     {
         return $this->authorizationCode;
+    }
+
+    /**
+     * ensure that the "redirect_uri" parameter is present if the
+     * "redirect_uri" parameter was included in the initial authorization
+     * request as described in Section 4.1.1, and if included ensure that
+     * their values are identical.
+     * @param AuthorizationCodeInterface $authorizationCode
+     * @param null|string $redirectUri
+     * @return bool
+     */
+    protected function isRedirectUriValid(AuthorizationCodeInterface $authorizationCode, ?string $redirectUri)
+    {
+        if ($authorizationCode->getRedirectUri() &&
+            (!$redirectUri || $redirectUri !== $authorizationCode->getRedirectUri())) {
+            return false;
+        }
+        return true;
     }
 }

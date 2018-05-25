@@ -8,9 +8,6 @@
 
 namespace OAuth2\Roles\ClientTypes;
 
-
-use OAuth2\Roles\ClientInterface;
-
 /**
  * Interface ConfidentialClientInterface
  * @package OAuth2\Roles\Clients
@@ -21,7 +18,7 @@ use OAuth2\Roles\ClientInterface;
  * restricted access to the client credentials), or capable of secure
  * client authentication using other means.
  */
-interface ConfidentialClientInterface extends ClientInterface
+interface ConfidentialClientInterface extends RegisteredClientInterface
 {
-public function getPassword(): string;
+    public function getPassword(): string;
 }

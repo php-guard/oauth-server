@@ -10,13 +10,13 @@ namespace OAuth2\Endpoints;
 
 
 use GuzzleHttp\Psr7\Response;
+use OAuth2\Exceptions\InvalidAuthorizationRequest;
 use OAuth2\Exceptions\InvalidRequestMethod;
 use OAuth2\Exceptions\OAuthException;
-use OAuth2\ResponseModes\ResponseModeInterface;
 use OAuth2\Roles\ResourceOwnerInterface;
 use Psr\Http\Message\ResponseInterface;
 use Psr\Http\Message\ServerRequestInterface;
-use Psr\Http\Message\UriInterface;
+
 
 /**
  * Class AuthorizationEndpoint
@@ -80,7 +80,7 @@ class AuthorizationEndpoint implements EndpointInterface
     {
         try {
             $this->authorizationRequest = $this->authorizationRequestBuilder
-                ->build($request, $this->resourceOwner, $redirectUri, $responseMode);
+                ->build($request, $this->resourceOwner);
 
             if ($response = $this->verifyResourceOwner()) {
                 return $response;
@@ -88,18 +88,16 @@ class AuthorizationEndpoint implements EndpointInterface
         } catch (InvalidRequestMethod $e) {
             return new Response(404);
         } catch (OAuthException $e) {
-            if (!$redirectUri instanceof UriInterface || !$responseMode instanceof ResponseModeInterface) {
-                /**
-                 * @see https://tools.ietf.org/html/rfc6749#section-4.1.2.1
-                 * If the request fails due to a missing, invalid, or mismatching
-                 * redirection URI, or if the client identifier is missing or invalid,
-                 * the authorization server SHOULD inform the resource owner of the
-                 * error and MUST NOT automatically redirect the user-agent to the
-                 * invalid redirection URI.
-                 */
-                return new Response(400, ['content-type' => 'application/json'], $e->jsonSerialize());
-            }
-
+            /**
+             * @see https://tools.ietf.org/html/rfc6749#section-4.1.2.1
+             * If the request fails due to a missing, invalid, or mismatching
+             * redirection URI, or if the client identifier is missing or invalid,
+             * the authorization server SHOULD inform the resource owner of the
+             * error and MUST NOT automatically redirect the user-agent to the
+             * invalid redirection URI.
+             */
+            return new Response(400, ['content-type' => 'application/json'], $e->jsonSerialize());
+        } catch (InvalidAuthorizationRequest $e) {
             /**
              * @see https://tools.ietf.org/html/rfc6749#section-4.1.2.1
              * If the resource owner denies the access request or if the request
@@ -132,21 +130,24 @@ class AuthorizationEndpoint implements EndpointInterface
              * client.
              *
              */
+            $oauthException = $e->getOauthException();
             $responseData = [
-                'error' => $e->getError()
+                'error' => $oauthException->getError()
             ];
-            if ($e->getErrorDescription()) {
-                $responseData['error_description'] = $e->getErrorDescription();
-            }
-            if ($e->getErrorUri()) {
-                $responseData['error_uri'] = $e->getErrorUri();
+
+            if ($oauthException->getErrorDescription()) {
+                $responseData['error_description'] = $oauthException->getErrorDescription();
             }
 
-            if (!empty($this->state)) {
-                $responseData['state'] = $this->state;
+            if ($oauthException->getErrorUri()) {
+                $responseData['error_uri'] = $oauthException->getErrorUri();
             }
 
-            return $responseMode->buildResponse($redirectUri, $responseData);
+            if (!empty($e->getState())) {
+                $responseData['state'] = $e->getState();
+            }
+
+            return $e->getResponseMode()->buildResponse($e->getRedirectUri(), $responseData);
         }
 
         return null;

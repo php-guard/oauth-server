@@ -29,6 +29,11 @@ class Config
      */
     protected $revokeOldRefreshToken = true;
 
+    /**
+     * @var bool
+     */
+    protected $revokeTokensWhenAuthorizationCodeIsReused = true;
+
     public function __construct(ScopePolicyInterface $scopePolicy)
     {
         $this->scopePolicy = $scopePolicy;
@@ -83,5 +88,21 @@ class Config
     public function setRevokeOldRefreshToken(bool $revokeOldRefreshToken): void
     {
         $this->revokeOldRefreshToken = $revokeOldRefreshToken;
+    }
+
+    /**
+     * @return bool
+     */
+    public function shouldRevokeTokensWhenAuthorizationCodeIsReused(): bool
+    {
+        return $this->revokeTokensWhenAuthorizationCodeIsReused;
+    }
+
+    /**
+     * @param bool $revokeTokensWhenAuthorizationCodeIsReused
+     */
+    public function setRevokeTokensWhenAuthorizationCodeIsReused(bool $revokeTokensWhenAuthorizationCodeIsReused): void
+    {
+        $this->revokeTokensWhenAuthorizationCodeIsReused = $revokeTokensWhenAuthorizationCodeIsReused;
     }
 }
