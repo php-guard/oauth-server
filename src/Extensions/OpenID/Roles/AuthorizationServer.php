@@ -6,23 +6,27 @@
  * Time: 21:26
  */
 
-namespace OAuth2\Extensions\OpenID;
+namespace OAuth2\Extensions\OpenID\Roles;
 
 
+use OAuth2\Endpoints\AuthorizationRequestBuilder;
+use OAuth2\Extensions\OpenID\Config;
 use OAuth2\Extensions\OpenID\Endpoints\AuthorizationEndpoint;
 use OAuth2\Extensions\OpenID\AuthorizationGrantTypes\Flows\AuthorizationCodeFlow;
 use OAuth2\Extensions\OpenID\AuthorizationGrantTypes\Flows\HybridFlow;
 use OAuth2\Extensions\OpenID\AuthorizationGrantTypes\Flows\ImplicitFlow;
-use OAuth2\Extensions\OpenID\Roles\ResourceOwnerInterface;
+use OAuth2\Extensions\OpenID\IdTokenManager;
 use OAuth2\Extensions\OpenID\Storages\StorageManager;
+use OAuth2\Roles\AuthorizationServerEndUserInterface;
 
-class Server extends \OAuth2\Server
+class AuthorizationServer extends \OAuth2\Roles\AuthorizationServer
 {
     protected $idTokenManager;
 
-    public function __construct(Config $config, StorageManager $storageManager, ResourceOwnerInterface $resourceOwner)
+    public function __construct(Config $config, StorageManager $storageManager,
+                                AuthorizationServerEndUserInterface $authorizationServerEndUser)
     {
-        parent::__construct($config, $storageManager, $resourceOwner);
+        parent::__construct($config, $storageManager, $authorizationServerEndUser);
 
         $this->idTokenManager = new IdTokenManager($config);
 
@@ -48,13 +52,15 @@ class Server extends \OAuth2\Server
             $this->idTokenManager
         ));
 
-        $this->authorizationEndpoint = new AuthorizationEndpoint(
+        $authorizationRequestBuilder = new AuthorizationRequestBuilder(
+            $storageManager->getClientStorage(),
             $this->responseTypeManager,
             $this->responseModeManager,
-            $this->scopePolicyManager,
-            $resourceOwner,
-            $storageManager->getClientStorage(),
-            $this->idTokenManager
+            $this->scopePolicyManager
+        );
+        $this->authorizationEndpoint = new AuthorizationEndpoint(
+            $authorizationRequestBuilder,
+            $authorizationServerEndUser
         );
     }
 }

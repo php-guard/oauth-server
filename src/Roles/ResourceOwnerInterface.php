@@ -25,21 +25,4 @@ use Psr\Http\Message\ResponseInterface;
 interface ResourceOwnerInterface
 {
     public function getIdentifier(): string;
-
-    /**
-     * null: No decision given yet
-     * scope[]: Allow decision given for specific scopes
-     * Empty array: Deny decision given
-     *
-     * @param ClientInterface $client
-     * @param array $scopes
-     * @return array|null
-     */
-    public function hasGivenConsent(ClientInterface $client, array $scopes): ?array;
-
-    public function obtainConsent(AuthorizationRequest $authorizationRequest): ResponseInterface;
-
-    public function isAuthenticated(): bool;
-
-    public function authenticate(): ResponseInterface;
 }

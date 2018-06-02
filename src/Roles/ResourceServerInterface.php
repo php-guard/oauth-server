@@ -8,6 +8,10 @@
 
 namespace OAuth2\Roles;
 
+use OAuth2\Roles\ResourceServer\AuthenticatedRequest;
+use Psr\Http\Message\ResponseInterface;
+use Psr\Http\Message\ServerRequestInterface;
+
 
 /**
  * Interface ResourceServerInterface
@@ -19,5 +23,5 @@ namespace OAuth2\Roles;
  */
 interface ResourceServerInterface
 {
-
+    public function verifyRequest(ServerRequestInterface $request, array $requiredScopes, ?string $realm = null): ?ResponseInterface;
 }

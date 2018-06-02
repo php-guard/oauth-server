@@ -12,9 +12,9 @@ namespace OAuth2\Tests\Endpoints;
 use OAuth2\Config;
 use OAuth2\Storages\StorageManager;
 use OAuth2\Roles\ClientProfiles\WebApplicationClient;
-use OAuth2\Server;
+use OAuth2\AuthorizationServer;
 use OAuth2\ScopePolicy\Policies\DefaultScopePolicy;
-use OAuth2\Tests\Roles\ResourceOwner;
+use OAuth2\Tests\Roles\AuthorizationServer;
 use OAuth2\Tests\Storages\AccessTokenStorage;
 use OAuth2\Tests\Storages\AuthorizationCodeStorage;
 use OAuth2\Tests\Storages\ClientStorage;
@@ -26,11 +26,11 @@ abstract class Endpoint extends TestCase
 {
     protected $config;
     /**
-     * @var Server
+     * @var AuthorizationServer
      */
     protected $server;
     protected $storageManager;
-    protected $resourceOwner;
+    protected $authorizationServer;
     /**
      * @var WebApplicationClient
      */
@@ -48,8 +48,8 @@ abstract class Endpoint extends TestCase
             new AuthorizationCodeStorage(),
             new AccessTokenStorage(),
             new RefreshTokenStorage());
-        $this->resourceOwner = new ResourceOwner();
-        $this->server = new Server($this->config, $this->storageManager, $this->resourceOwner);
+        $this->authorizationServer = new AuthorizationServer();
+        $this->server = new AuthorizationServer($this->config, $this->storageManager, $this->authorizationServer);
         $this->client = $clientStorage->get('phpunit');
     }
 }

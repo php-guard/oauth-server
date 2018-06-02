@@ -14,7 +14,7 @@ use OAuth2\Endpoints\AuthorizationRequest;
 use OAuth2\Roles\ClientInterface;
 use Psr\Http\Message\ResponseInterface;
 
-interface ResourceOwnerInterface extends \OAuth2\Roles\ResourceOwnerInterface
+interface AuthorizationServerEndUserEndUserInterface extends \OAuth2\Roles\AuthorizationServerEndUserInterface
 {
     public function getLastTimeActivelyAuthenticated(): ?\DateTime;
 
@@ -24,7 +24,7 @@ interface ResourceOwnerInterface extends \OAuth2\Roles\ResourceOwnerInterface
      * @param null|string $loginHint
      * @return ResponseInterface
      */
-    public function authenticate(bool $accountSelectionRequired = false, ?string $loginHint = null): ResponseInterface;
+    public function authenticateResourceOwner(bool $accountSelectionRequired = false, ?string $loginHint = null): ResponseInterface;
 
     /**
      * If prompt value is login, server should re-authenticate the user. This means that this predicate should return
@@ -34,7 +34,7 @@ interface ResourceOwnerInterface extends \OAuth2\Roles\ResourceOwnerInterface
      * @param bool $alwaysAuthenticate
      * @return bool
      */
-    public function isAuthenticated(bool $alwaysAuthenticate = false): bool;
+//    public function isResourceOwnerAuthenticated(bool $alwaysAuthenticate = false): bool;
 
     public function hasGivenConsent(ClientInterface $client, array $scopes, ?bool $alwaysPromptConsent = false): ?array;
 

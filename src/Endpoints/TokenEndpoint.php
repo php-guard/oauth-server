@@ -53,7 +53,6 @@ use Psr\Http\Message\ServerRequestInterface;
  */
 class TokenEndpoint implements EndpointInterface
 {
-
     /**
      * @var ClientStorageInterface
      */

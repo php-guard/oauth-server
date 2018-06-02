@@ -9,6 +9,11 @@
 namespace OAuth2\ClientAuthentication;
 
 
+/**
+ * Interface PasswordAuthenticationInterface
+ * @package OAuth2\ClientAuthentication
+ * @deprecated Useful ?
+ */
 interface PasswordAuthenticationInterface
 {
 

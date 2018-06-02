@@ -9,6 +9,8 @@
 namespace OAuth2\Storages;
 
 
+use OAuth2\Roles\ResourceOwnerInterface;
+
 interface ResourceOwnerStorageInterface
 {
     /**
@@ -24,11 +26,13 @@ interface ResourceOwnerStorageInterface
      * It's up to you to implement this protection
      * and raise an OAuthException when an attack is detected.
      */
-public function validateCredentials(string $username, string $password): ?string;
+    public function validateCredentials(string $username, string $password): ?string;
 
     /**
      * @param string $identifier
      * @return bool
      */
-public function exists(string $identifier): bool;
+    public function exists(string $identifier): bool;
+
+    public function get(string $identifier): ?ResourceOwnerInterface;
 }

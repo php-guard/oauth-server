@@ -1,13 +1,14 @@
 <?php
 /**
  * Created by PhpStorm.
- * User: GCC-MED
- * Date: 11/01/2018
- * Time: 14:21
+ * User: Alexandre
+ * Date: 02/06/2018
+ * Time: 18:13
  */
 
 namespace OAuth2\Roles;
 
+use OAuth2\Endpoints\EndpointInterface;
 
 /**
  * Class AuthorizationServerInterface
@@ -19,5 +20,7 @@ namespace OAuth2\Roles;
  */
 interface AuthorizationServerInterface
 {
+    public function getAuthorizationEndpoint(): EndpointInterface;
 
+    public function getTokenEndpoint(): EndpointInterface;
 }

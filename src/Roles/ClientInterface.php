@@ -24,10 +24,6 @@ use OAuth2\Roles\ClientTypes\ClientMetadataInterface;
  */
 interface ClientInterface
 {
-//public function getIdentifier(): string;
-//
-//public function getPassword(): ?string;
-
     /**
      * @return bool
      *
@@ -36,11 +32,11 @@ interface ClientInterface
      * authenticate with the authorization server as described in
      * Section 2.3 when making requests to the token endpoint.
      */
-public function hasCredentials(): bool;
+    public function hasCredentials(): bool;
 
-//public function isHttpBasicAuthenticationSchemeSupported(): bool;
+    //public function isHttpBasicAuthenticationSchemeSupported(): bool;
 
-//public function isTLSSupported(): bool;
+    //public function isTLSSupported(): bool;
 
-public function getMetadata(): ClientMetadataInterface;
+    public function getMetadata(): ClientMetadataInterface;
 }

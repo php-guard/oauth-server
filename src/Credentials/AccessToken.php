@@ -20,7 +20,7 @@ class AccessToken extends Token implements AccessTokenInterface
      */
     protected $type;
 
-    public function __construct(string $token, string $type, array $scopes, string $clientIdentifier,
+    public function __construct(string $type, string $token, array $scopes, string $clientIdentifier,
                                 ?string $resourceOwnerIdentifier, \DateTimeInterface $expiresAt,
                                 ?string $authorizationCode = null)
     {

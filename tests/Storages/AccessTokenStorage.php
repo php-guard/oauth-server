@@ -12,6 +12,7 @@ namespace OAuth2\Tests\Storages;
 use OAuth2\Credentials\AccessToken;
 use OAuth2\Credentials\AccessTokenInterface;
 
+use OAuth2\Credentials\BearerToken;
 use OAuth2\Credentials\TokenInterface;
 use OAuth2\Helper;
 use OAuth2\Storages\AccessTokenStorageInterface;
@@ -46,7 +47,7 @@ class AccessTokenStorage implements AccessTokenStorageInterface
     {
         $expiresAt = new \DateTime('now', new \DateTimeZone('UTC'));
         $expiresAt->modify('+'.$this->getLifetime().' seconds');
-        $accessToken = new AccessToken(Helper::generateToken(20), 'bearer', $scopes, $clientIdentifier,
+        $accessToken = new BearerToken(Helper::generateToken(20), $scopes, $clientIdentifier,
             $resourceOwnerIdentifier, $expiresAt, $authorizationCode);
         $this->tokens[$accessToken->getToken()] = $accessToken;
         return $accessToken;

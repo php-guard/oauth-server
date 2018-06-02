@@ -18,7 +18,7 @@ interface AccessTokenStorageInterface extends TokenStorageInterface
      * @param string $token
      * @return null|AccessTokenInterface
      */
-public function get(string $token): ?TokenInterface;
+    public function get(string $token): ?TokenInterface;
 
     /**
      * @param array $scopes
@@ -27,6 +27,6 @@ public function get(string $token): ?TokenInterface;
      * @param null|string $authorizationCode
      * @return AccessTokenInterface
      */
-public function generate(array $scopes, string $clientIdentifier, ?string $resourceOwnerIdentifier = null,
-                      ?string $authorizationCode = null): TokenInterface;
+    public function generate(array $scopes, string $clientIdentifier, ?string $resourceOwnerIdentifier = null,
+                             ?string $authorizationCode = null): TokenInterface;
 }

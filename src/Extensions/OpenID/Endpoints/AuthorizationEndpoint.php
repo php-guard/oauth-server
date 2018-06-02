@@ -9,12 +9,14 @@
 namespace OAuth2\Extensions\OpenID\Endpoints;
 
 
+use OAuth2\Endpoints\AuthorizationRequestBuilder;
 use OAuth2\Exceptions\OAuthException;
 use OAuth2\Extensions\OpenID\IdTokenManager;
 use OAuth2\IdTokenInterface;
 use OAuth2\ResponseModes\ResponseModeManager;
 use OAuth2\AuthorizationEndpointResponseTypes\ResponseTypeManager;
 use OAuth2\Extensions\OpenID\Roles\ResourceOwnerInterface;
+use OAuth2\Roles\AuthorizationServerEndUserInterface;
 use OAuth2\ScopePolicy\ScopePolicyManager;
 use OAuth2\Storages\ClientStorageInterface;
 use Psr\Http\Message\ResponseInterface;
@@ -63,22 +65,11 @@ class AuthorizationEndpoint extends \OAuth2\Endpoints\AuthorizationEndpoint
      * @var string[]|null
      */
     private $acrValues;
-    /**
-     * @var ResourceOwnerInterface
-     */
-    private $resourceOwner;
-    /**
-     * @var IdTokenManager
-     */
-    private $idTokenManager;
 
-    public function __construct(ResponseTypeManager $responseTypeManager, ResponseModeManager $responseModeManager,
-                                ScopePolicyManager $scopePolicyManager, ResourceOwnerInterface $resourceOwner,
-                                ClientStorageInterface $clientStorage, IdTokenManager $idTokenManager)
+    public function __construct(AuthorizationRequestBuilder $authorizationRequestBuilder,
+                                AuthorizationServerEndUserInterface $authorizationServerEndUser)
     {
-        parent::__construct($responseTypeManager, $responseModeManager, $scopePolicyManager, $resourceOwner, $clientStorage);
-        $this->resourceOwner = $resourceOwner;
-        $this->idTokenManager = $idTokenManager;
+        parent::__construct($authorizationRequestBuilder, $authorizationServerEndUser);
     }
 
     /**
@@ -96,14 +87,13 @@ class AuthorizationEndpoint extends \OAuth2\Endpoints\AuthorizationEndpoint
             return $this->resourceOwner->authenticate($this->prompt == self::PROMPT_SELECT_ACCOUNT, $this->loginHint);
         }
 
-        if($this->idTokenHint) {
+        if ($this->idTokenHint) {
             // check if user associated to this id token is the current user.
 //                var_dump($this->idTokenHint['sub']);die;
-            if($this->idTokenHint['sub'] !== $this->resourceOwner->getIdentifier()) {
-                if($this->prompt == self::PROMPT_NONE) {
+            if ($this->idTokenHint['sub'] !== $this->resourceOwner->getIdentifier()) {
+                if ($this->prompt == self::PROMPT_NONE) {
                     throw new OAuthException('invalid_request');
-                }
-                else {
+                } else {
                     throw new OAuthException('login_required');
                 }
             }
@@ -161,24 +151,16 @@ class AuthorizationEndpoint extends \OAuth2\Endpoints\AuthorizationEndpoint
         $this->maxAge = empty($requestData['max_age']) ? null : $requestData['max_age'];
         $this->uiLocales = empty($requestData['ui_locales']) ? null : explode(' ', $requestData['ui_locales']);
 
-        if(!empty($requestData['id_token_hint'])) {
+        if (!empty($requestData['id_token_hint'])) {
             try {
                 $this->idTokenHint = $this->idTokenManager->decode($requestData['id_token_hint']);
             } catch (\Exception $exception) {
-                throw new OAuthException('invalid_request', 'Failed to decode id_token_hint : '.$exception->getMessage());
+                throw new OAuthException('invalid_request', 'Failed to decode id_token_hint : ' . $exception->getMessage());
             }
         }
 
         $this->loginHint = empty($requestData['login_hint']) ? null : $requestData['login_hint'];
         $this->acrValues = empty($requestData['acr_values']) ? null : explode(' ', $requestData['acr_values']);
-    }
-
-    /**
-     * @return ResourceOwnerInterface
-     */
-    public function getResourceOwner(): \OAuth2\Roles\ResourceOwnerInterface
-    {
-        return parent::getResourceOwner();
     }
 
     /**

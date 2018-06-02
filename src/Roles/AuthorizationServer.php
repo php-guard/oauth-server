@@ -6,14 +6,16 @@
  * Time: 15:55
  */
 
-namespace OAuth2;
+namespace OAuth2\Roles;
 
 
 use OAuth2\ClientAuthentication\ClientAuthenticationMethodManager;
 use OAuth2\ClientAuthentication\ClientSecretBasicAuthenticationMethod;
 use OAuth2\ClientAuthentication\ClientSecretPostAuthenticationMethod;
+use OAuth2\Config;
 use OAuth2\Endpoints\AuthorizationEndpoint;
 use OAuth2\Endpoints\AuthorizationRequestBuilder;
+use OAuth2\Endpoints\EndpointInterface;
 use OAuth2\Endpoints\TokenEndpoint;
 use OAuth2\AuthorizationGrantTypes\Flows\AuthorizationCodeFlow;
 use OAuth2\AuthorizationGrantTypes\Flows\ClientCredentialsFlow;
@@ -26,11 +28,11 @@ use OAuth2\ResponseModes\FragmentResponseMode;
 use OAuth2\ResponseModes\QueryResponseMode;
 use OAuth2\ResponseModes\ResponseModeManager;
 use OAuth2\AuthorizationEndpointResponseTypes\ResponseTypeManager;
-use OAuth2\Roles\ResourceOwnerInterface;
 use OAuth2\ScopePolicy\ScopePolicyManager;
 use OAuth2\Storages\StorageManager;
 
-class Server
+
+class AuthorizationServer implements AuthorizationServerInterface
 {
     protected $authorizationEndpoint;
     protected $tokenEndpoint;
@@ -43,7 +45,7 @@ class Server
 
     public function __construct(Config $config,
                                 StorageManager $storageManager,
-                                ResourceOwnerInterface $resourceOwner)
+                                AuthorizationServerEndUserInterface $authorizationServerEndUser)
     {
         $this->responseTypeManager = new ResponseTypeManager();
         $this->scopePolicyManager = new ScopePolicyManager($config);
@@ -111,7 +113,7 @@ class Server
             $this->responseModeManager,
             $this->scopePolicyManager
         );
-        $this->authorizationEndpoint = new AuthorizationEndpoint($authorizationRequestBuilder, $resourceOwner);
+        $this->authorizationEndpoint = new AuthorizationEndpoint($authorizationRequestBuilder, $authorizationServerEndUser);
 
         $this->tokenEndpoint = new TokenEndpoint(
             $storageManager->getClientStorage(),
@@ -122,7 +124,7 @@ class Server
     /**
      * @return AuthorizationEndpoint
      */
-    public function getAuthorizationEndpoint(): AuthorizationEndpoint
+    public function getAuthorizationEndpoint(): EndpointInterface
     {
         return $this->authorizationEndpoint;
     }
@@ -130,7 +132,7 @@ class Server
     /**
      * @return TokenEndpoint
      */
-    public function getTokenEndpoint(): TokenEndpoint
+    public function getTokenEndpoint(): EndpointInterface
     {
         return $this->tokenEndpoint;
     }

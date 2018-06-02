@@ -13,7 +13,7 @@ use GuzzleHttp\Psr7\Response;
 use OAuth2\Exceptions\InvalidAuthorizationRequest;
 use OAuth2\Exceptions\InvalidRequestMethod;
 use OAuth2\Exceptions\OAuthException;
-use OAuth2\Roles\ResourceOwnerInterface;
+use OAuth2\Roles\AuthorizationServerEndUserInterface;
 use Psr\Http\Message\ResponseInterface;
 use Psr\Http\Message\ServerRequestInterface;
 
@@ -57,10 +57,6 @@ use Psr\Http\Message\ServerRequestInterface;
 class AuthorizationEndpoint implements EndpointInterface
 {
     /**
-     * @var ResourceOwnerInterface
-     */
-    private $resourceOwner;
-    /**
      * @var AuthorizationRequestBuilder
      */
     private $authorizationRequestBuilder;
@@ -68,23 +64,27 @@ class AuthorizationEndpoint implements EndpointInterface
      * @var AuthorizationRequest|null
      */
     private $authorizationRequest = null;
+    /**
+     * @var AuthorizationServerEndUserInterface
+     */
+    private $authorizationServerEndUser;
 
     public function __construct(AuthorizationRequestBuilder $authorizationRequestBuilder,
-                                ResourceOwnerInterface $resourceOwner)
+                                AuthorizationServerEndUserInterface $authorizationServerEndUser)
     {
-        $this->resourceOwner = $resourceOwner;
         $this->authorizationRequestBuilder = $authorizationRequestBuilder;
+        $this->authorizationServerEndUser = $authorizationServerEndUser;
     }
 
     public function verifyRequest(ServerRequestInterface $request): ?ResponseInterface
     {
         try {
-            $this->authorizationRequest = $this->authorizationRequestBuilder
-                ->build($request, $this->resourceOwner);
-
             if ($response = $this->verifyResourceOwner()) {
                 return $response;
             }
+
+            $this->authorizationRequest = $this->authorizationRequestBuilder
+                ->build($request, $this->authorizationServerEndUser->getAuthenticatedResourceOwner());
         } catch (InvalidRequestMethod $e) {
             return new Response(404);
         } catch (OAuthException $e) {
@@ -249,9 +249,9 @@ class AuthorizationEndpoint implements EndpointInterface
      */
     protected function verifyConsent(AuthorizationRequest $authorizationRequest): ?ResponseInterface
     {
-        $consentGiven = $this->resourceOwner->hasGivenConsent($authorizationRequest->getClient(), $authorizationRequest->getScopes());
+        $consentGiven = $this->authorizationServerEndUser->hasGivenConsent($authorizationRequest->getClient(), $authorizationRequest->getScopes());
         if (is_null($consentGiven)) {
-            return $this->resourceOwner->obtainConsent($authorizationRequest);
+            return $this->authorizationServerEndUser->obtainConsent($authorizationRequest);
         }
 
         if (empty($consentGiven)) {
@@ -264,17 +264,26 @@ class AuthorizationEndpoint implements EndpointInterface
 
     protected function verifyResourceOwner(): ?ResponseInterface
     {
-        if (!$this->resourceOwner->isAuthenticated()) {
-            return $this->resourceOwner->authenticate();
+        if (!$this->authorizationServerEndUser->getAuthenticatedResourceOwner()) {
+            return $this->authorizationServerEndUser->authenticateResourceOwner();
         }
         return null;
     }
 
+
     /**
-     * @return ResourceOwnerInterface
+     * @return AuthorizationRequest|null
      */
-    public function getResourceOwner(): ResourceOwnerInterface
+    public function getAuthorizationRequest(): ?AuthorizationRequest
     {
-        return $this->resourceOwner;
+        return $this->authorizationRequest;
+    }
+
+    /**
+     * @return AuthorizationServerEndUserInterface
+     */
+    public function getAuthorizationServerEndUser(): AuthorizationServerEndUserInterface
+    {
+        return $this->authorizationServerEndUser;
     }
 }
