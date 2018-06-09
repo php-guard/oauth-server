@@ -9,6 +9,7 @@
 namespace OAuth2\Roles\ResourceServer;
 
 
+use OAuth2\Credentials\AccessTokenInterface;
 use OAuth2\Roles\ClientTypes\RegisteredClientInterface;
 use OAuth2\Roles\ResourceOwnerInterface;
 use Psr\Http\Message\ServerRequestInterface;
@@ -28,19 +29,19 @@ class AuthenticatedRequest
      */
     private $resourceOwner;
     /**
-     * @var array
+     * @var AccessTokenInterface
      */
-    private $scopes;
+    private $accessToken;
 
     public function __construct(ServerRequestInterface $request,
                                 RegisteredClientInterface $client,
                                 ?ResourceOwnerInterface $resourceOwner,
-                                array $scopes)
+                                AccessTokenInterface $accessToken)
     {
         $this->request = $request;
         $this->client = $client;
         $this->resourceOwner = $resourceOwner;
-        $this->scopes = $scopes;
+        $this->accessToken = $accessToken;
     }
 
     /**
@@ -72,6 +73,14 @@ class AuthenticatedRequest
      */
     public function getScopes(): array
     {
-        return $this->scopes;
+        return $this->accessToken->getScopes();
+    }
+
+    /**
+     * @return AccessTokenInterface
+     */
+    public function getAccessToken(): AccessTokenInterface
+    {
+        return $this->accessToken;
     }
 }

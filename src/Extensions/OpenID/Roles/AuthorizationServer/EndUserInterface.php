@@ -6,7 +6,7 @@
  * Time: 21:35
  */
 
-namespace OAuth2\Extensions\OpenID\Roles;
+namespace OAuth2\Extensions\OpenID\Roles\AuthorizationServer;
 
 
 use OAuth2\Endpoints\AuthorizationRequest;
@@ -14,7 +14,7 @@ use OAuth2\Endpoints\AuthorizationRequest;
 use OAuth2\Roles\ClientInterface;
 use Psr\Http\Message\ResponseInterface;
 
-interface AuthorizationServerEndUserEndUserInterface extends \OAuth2\Roles\AuthorizationServerEndUserInterface
+interface EndUserInterface extends \OAuth2\Roles\AuthorizationServer\EndUserInterface
 {
     public function getLastTimeActivelyAuthenticated(): ?\DateTime;
 

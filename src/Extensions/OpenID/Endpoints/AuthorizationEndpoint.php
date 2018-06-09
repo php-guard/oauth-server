@@ -16,7 +16,7 @@ use OAuth2\IdTokenInterface;
 use OAuth2\ResponseModes\ResponseModeManager;
 use OAuth2\AuthorizationEndpointResponseTypes\ResponseTypeManager;
 use OAuth2\Extensions\OpenID\Roles\ResourceOwnerInterface;
-use OAuth2\Roles\AuthorizationServerEndUserInterface;
+use OAuth2\Roles\AuthorizationServer\EndUserInterface;
 use OAuth2\ScopePolicy\ScopePolicyManager;
 use OAuth2\Storages\ClientStorageInterface;
 use Psr\Http\Message\ResponseInterface;
@@ -67,7 +67,7 @@ class AuthorizationEndpoint extends \OAuth2\Endpoints\AuthorizationEndpoint
     private $acrValues;
 
     public function __construct(AuthorizationRequestBuilder $authorizationRequestBuilder,
-                                AuthorizationServerEndUserInterface $authorizationServerEndUser)
+                                EndUserInterface $authorizationServerEndUser)
     {
         parent::__construct($authorizationRequestBuilder, $authorizationServerEndUser);
     }

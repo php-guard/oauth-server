@@ -21,7 +21,7 @@ class AuthorizationEndpointTest extends Endpoint
             'redirect_uri' => $this->client->getMetadata()->getRedirectUris()[0] ?? null,
             'response_type' => 'code',
         ]);
-        $response = $this->server->getAuthorizationEndpoint()->handleRequest($request);
+        $response = $this->server->getAuthorizationServer()->getAuthorizationEndpoint()->handleRequest($request);
         $this->assertTrue($response->hasHeader('Location'));
         $location = new Uri($response->getHeader('Location')[0]);
         $response = [];
@@ -37,7 +37,7 @@ class AuthorizationEndpointTest extends Endpoint
             'redirect_uri' => $this->client->getMetadata()->getRedirectUris()[0] ?? null,
             'response_type' => 'token',
         ]);
-        $response = $this->server->getAuthorizationEndpoint()->handleRequest($request);
+        $response = $this->server->getAuthorizationServer()->getAuthorizationEndpoint()->handleRequest($request);
         $this->assertTrue($response->hasHeader('Location'));
         $location = new Uri($response->getHeader('Location')[0]);
         $response = [];

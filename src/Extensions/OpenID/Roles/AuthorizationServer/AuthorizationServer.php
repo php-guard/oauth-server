@@ -6,7 +6,7 @@
  * Time: 21:26
  */
 
-namespace OAuth2\Extensions\OpenID\Roles;
+namespace OAuth2\Extensions\OpenID\Roles\AuthorizationServer;
 
 
 use OAuth2\Endpoints\AuthorizationRequestBuilder;
@@ -17,16 +17,19 @@ use OAuth2\Extensions\OpenID\AuthorizationGrantTypes\Flows\HybridFlow;
 use OAuth2\Extensions\OpenID\AuthorizationGrantTypes\Flows\ImplicitFlow;
 use OAuth2\Extensions\OpenID\IdTokenManager;
 use OAuth2\Extensions\OpenID\Storages\StorageManager;
-use OAuth2\Roles\AuthorizationServerEndUserInterface;
+use OAuth2\Roles\AuthorizationServer\EndUserInterface;
+use OAuth2\ScopePolicy\ScopePolicyManager;
 
-class AuthorizationServer extends \OAuth2\Roles\AuthorizationServer
+class AuthorizationServer extends \OAuth2\Roles\AuthorizationServer\AuthorizationServer
 {
     protected $idTokenManager;
 
-    public function __construct(Config $config, StorageManager $storageManager,
-                                AuthorizationServerEndUserInterface $authorizationServerEndUser)
+    public function __construct(Config $config,
+                                StorageManager $storageManager,
+                                ScopePolicyManager $scopePolicyManager,
+                                EndUserInterface $authorizationServerEndUser)
     {
-        parent::__construct($config, $storageManager, $authorizationServerEndUser);
+        parent::__construct($config, $storageManager, $scopePolicyManager, $authorizationServerEndUser);
 
         $this->idTokenManager = new IdTokenManager($config);
 

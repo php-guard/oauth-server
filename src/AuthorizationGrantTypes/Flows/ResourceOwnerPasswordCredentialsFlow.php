@@ -169,16 +169,15 @@ class ResourceOwnerPasswordCredentialsFlow extends AbstractGrantType implements 
         $requestedScopes = $this->scopePolicyManager->scopeStringToArray($requestData['scope'] ?? null);
         $scopes = $this->scopePolicyManager->getScopes($client, $requestedScopes);
 
-        $resourceOwnerIdentifier = $this->resourceOwnerStorage->validateCredentials(
-            $requestData['username'], $requestData['password']);
+        $resourceOwner = $this->resourceOwnerStorage->get($requestData['username']);
 
-        if (is_null($resourceOwnerIdentifier)) {
+        if (!$resourceOwner || !$this->resourceOwnerStorage->validateCredentials($resourceOwner, $requestData['password'])) {
             throw new OAuthException('invalid_grant',
                 'The provider authorization grant is invalid. Resource owner credentials invalid.',
                 'https://tools.ietf.org/html/rfc7636#section-4.3');
         }
 
-        $responseData = $this->issueTokens($scopes, $client->getIdentifier(), $resourceOwnerIdentifier);
+        $responseData = $this->issueTokens($scopes, $client->getIdentifier(), $resourceOwner->getIdentifier());
 
         /**
          * @see https://tools.ietf.org/html/rfc6749#section-3.3

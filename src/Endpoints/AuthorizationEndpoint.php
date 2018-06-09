@@ -13,7 +13,7 @@ use GuzzleHttp\Psr7\Response;
 use OAuth2\Exceptions\InvalidAuthorizationRequest;
 use OAuth2\Exceptions\InvalidRequestMethod;
 use OAuth2\Exceptions\OAuthException;
-use OAuth2\Roles\AuthorizationServerEndUserInterface;
+use OAuth2\Roles\AuthorizationServer\EndUserInterface;
 use Psr\Http\Message\ResponseInterface;
 use Psr\Http\Message\ServerRequestInterface;
 
@@ -65,12 +65,12 @@ class AuthorizationEndpoint implements EndpointInterface
      */
     private $authorizationRequest = null;
     /**
-     * @var AuthorizationServerEndUserInterface
+     * @var EndUserInterface
      */
     private $authorizationServerEndUser;
 
     public function __construct(AuthorizationRequestBuilder $authorizationRequestBuilder,
-                                AuthorizationServerEndUserInterface $authorizationServerEndUser)
+                                EndUserInterface $authorizationServerEndUser)
     {
         $this->authorizationRequestBuilder = $authorizationRequestBuilder;
         $this->authorizationServerEndUser = $authorizationServerEndUser;
@@ -280,9 +280,9 @@ class AuthorizationEndpoint implements EndpointInterface
     }
 
     /**
-     * @return AuthorizationServerEndUserInterface
+     * @return EndUserInterface
      */
-    public function getAuthorizationServerEndUser(): AuthorizationServerEndUserInterface
+    public function getAuthorizationServerEndUser(): EndUserInterface
     {
         return $this->authorizationServerEndUser;
     }

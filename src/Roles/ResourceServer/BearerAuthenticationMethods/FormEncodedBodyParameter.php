@@ -7,6 +7,7 @@
  */
 
 namespace OAuth2\Roles\ResourceServer\BearerAuthenticationMethods;
+
 use Psr\Http\Message\ServerRequestInterface;
 
 /**
@@ -58,11 +59,15 @@ class FormEncodedBodyParameter implements BearerAuthenticationMethodInterface
 {
     public function support(ServerRequestInterface $request): bool
     {
-
+        return isset($request->getParsedBody()['access_token']);
     }
 
     public function authenticate(ServerRequestInterface $request): ?string
     {
-
+        $contentType = $request->getHeader('Content-Type')[0] ?? null;
+        if ($contentType == 'application/x-www-form-urlencoded') {
+            return $request->getParsedBody()['access_token'];
+        }
+        return null;
     }
 }

@@ -14,9 +14,9 @@ use OAuth2\Roles\ResourceOwnerInterface;
 interface ResourceOwnerStorageInterface
 {
     /**
-     * @param string $username
+     * @param ResourceOwnerInterface $resourceOwner
      * @param string $password
-     * @return null|string
+     * @return null|ResourceOwnerInterface
      *
      * @see https://tools.ietf.org/html/rfc6749#section-4.3.3
      * The authorization server MUST protect the endpoint against
@@ -26,7 +26,7 @@ interface ResourceOwnerStorageInterface
      * It's up to you to implement this protection
      * and raise an OAuthException when an attack is detected.
      */
-    public function validateCredentials(string $username, string $password): ?string;
+    public function validateCredentials(ResourceOwnerInterface $resourceOwner, string $password): bool;
 
     /**
      * @param string $identifier

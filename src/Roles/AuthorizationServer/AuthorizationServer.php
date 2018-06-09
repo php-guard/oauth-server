@@ -6,7 +6,7 @@
  * Time: 15:55
  */
 
-namespace OAuth2\Roles;
+namespace OAuth2\Roles\AuthorizationServer;
 
 
 use OAuth2\ClientAuthentication\ClientAuthenticationMethodManager;
@@ -28,6 +28,7 @@ use OAuth2\ResponseModes\FragmentResponseMode;
 use OAuth2\ResponseModes\QueryResponseMode;
 use OAuth2\ResponseModes\ResponseModeManager;
 use OAuth2\AuthorizationEndpointResponseTypes\ResponseTypeManager;
+use OAuth2\Roles\AuthorizationServerInterface;
 use OAuth2\ScopePolicy\ScopePolicyManager;
 use OAuth2\Storages\StorageManager;
 
@@ -45,10 +46,11 @@ class AuthorizationServer implements AuthorizationServerInterface
 
     public function __construct(Config $config,
                                 StorageManager $storageManager,
-                                AuthorizationServerEndUserInterface $authorizationServerEndUser)
+                                ScopePolicyManager $scopePolicyManager,
+                                EndUserInterface $authorizationServerEndUser)
     {
         $this->responseTypeManager = new ResponseTypeManager();
-        $this->scopePolicyManager = new ScopePolicyManager($config);
+        $this->scopePolicyManager = $scopePolicyManager;
         $this->grantTypeManager = new GrantTypeManager();
 
         $this->clientAuthenticationMethodManager = new ClientAuthenticationMethodManager($storageManager->getClientStorage());

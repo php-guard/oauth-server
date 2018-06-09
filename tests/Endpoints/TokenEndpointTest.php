@@ -24,7 +24,7 @@ class TokenEndpointTest extends AuthorizationEndpointTest
             'redirect_uri' => $this->client->getMetadata()->getRedirectUris()[0] ?? null,
             'code' => $code,
         ]);
-        $response = $this->server->getTokenEndpoint()->handleRequest($request);
+        $response = $this->server->getAuthorizationServer()->getTokenEndpoint()->handleRequest($request);
         $json = $response->getBody()->__toString();
         $response = json_decode($json, true);
         $this->assertArrayHasKey('access_token', $response, $json);
@@ -46,7 +46,7 @@ class TokenEndpointTest extends AuthorizationEndpointTest
             'refresh_token' => $tokens['refresh_token'],
         ]);
 
-        $response = $this->server->getTokenEndpoint()->handleRequest($request);
+        $response = $this->server->getAuthorizationServer()->getTokenEndpoint()->handleRequest($request);
         $json = $response->getBody()->__toString();
         $response = json_decode($json, true);
 
@@ -68,7 +68,7 @@ class TokenEndpointTest extends AuthorizationEndpointTest
             'password' => 'password',
         ]);
 
-        $response = $this->server->getTokenEndpoint()->handleRequest($request);
+        $response = $this->server->getAuthorizationServer()->getTokenEndpoint()->handleRequest($request);
         $json = $response->getBody()->__toString();
         $response = json_decode($json, true);
 
@@ -86,7 +86,7 @@ class TokenEndpointTest extends AuthorizationEndpointTest
             'grant_type' => 'client_credentials'
         ]);
 
-        $response = $this->server->getTokenEndpoint()->handleRequest($request);
+        $response = $this->server->getAuthorizationServer()->getTokenEndpoint()->handleRequest($request);
         $json = $response->getBody()->__toString();
         $response = json_decode($json, true);
 

@@ -12,12 +12,12 @@ namespace OAuth2\Tests\Roles;
 use GuzzleHttp\Psr7\Response;
 use OAuth2\Endpoints\AuthorizationRequest;
 
-use OAuth2\Extensions\OpenID\Roles\AuthorizationServerInterface;
+use OAuth2\Extensions\OpenID\Roles\AuthorizationServer\EndUserInterface;
 use OAuth2\Roles\ClientInterface;
 use OAuth2\Roles\ResourceOwnerInterface;
 use Psr\Http\Message\ResponseInterface;
 
-class AuthorizationServerEndUser implements AuthorizationServerInterface
+class AuthorizationServerEndUser implements EndUserInterface
 {
     private $resourceOwner;
 
