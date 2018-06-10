@@ -32,4 +32,12 @@ class AccessToken extends Token implements AccessTokenInterface
     {
         return $this->type;
     }
+
+    /**
+     * @return null|string
+     */
+    public function getRefreshToken(): ?string
+    {
+        return $this->refreshToken;
+    }
 }

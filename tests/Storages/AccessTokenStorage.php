@@ -13,6 +13,7 @@ use OAuth2\Credentials\AccessToken;
 use OAuth2\Credentials\AccessTokenInterface;
 
 use OAuth2\Credentials\BearerToken;
+use OAuth2\Credentials\RefreshTokenInterface;
 use OAuth2\Credentials\TokenInterface;
 use OAuth2\Helper;
 use OAuth2\Storages\AccessTokenStorageInterface;
@@ -29,9 +30,16 @@ class AccessTokenStorage implements AccessTokenStorageInterface
         return $this->tokens[$token] ?? null;
     }
 
-    public function revoke(string $token)
+    public function getByRefreshToken(RefreshTokenInterface $refreshToken): array
     {
-        unset($this->tokens[$token]);
+        return array_filter($this->tokens, function(AccessTokenInterface $token) use ($refreshToken) {
+            return $token->getRefreshToken() === $refreshToken->getToken();
+        });
+    }
+
+    public function revoke(TokenInterface $token)
+    {
+        unset($this->tokens[$token->getToken()]);
     }
 
     /**

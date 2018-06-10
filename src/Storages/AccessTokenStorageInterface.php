@@ -10,6 +10,7 @@ namespace OAuth2\Storages;
 
 
 use OAuth2\Credentials\AccessTokenInterface;
+use OAuth2\Credentials\RefreshTokenInterface;
 use OAuth2\Credentials\TokenInterface;
 
 interface AccessTokenStorageInterface extends TokenStorageInterface
@@ -19,6 +20,12 @@ interface AccessTokenStorageInterface extends TokenStorageInterface
      * @return null|AccessTokenInterface
      */
     public function get(string $token): ?TokenInterface;
+
+    /**
+     * @param RefreshTokenInterface $refreshToken
+     * @return AccessTokenInterface[]|null
+     */
+    public function getByRefreshToken(RefreshTokenInterface $refreshToken): array;
 
     /**
      * @param array $scopes

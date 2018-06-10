@@ -19,11 +19,11 @@ https://tools.ietf.org/wg/oauth/
 
 Oauth2
 
-* [The OAuth 2.0 Authorization Framework](https://tools.ietf.org/html/rfc6749)
-* [The OAuth 2.0 Authorization Framework: Bearer Token Usage](https://tools.ietf.org/html/rfc6750)
-* [An IETF URN Sub-Namespace for OAuth](https://tools.ietf.org/html/rfc6755)
+* [The OAuth 2.0 Authorization Framework](https://tools.ietf.org/html/rfc6749) - done
+* [The OAuth 2.0 Authorization Framework: Bearer Token Usage](https://tools.ietf.org/html/rfc6750) - done
+* [An IETF URN Sub-Namespace for OAuth](https://tools.ietf.org/html/rfc6755) - info
 * [OAuth 2.0 Threat Model and Security Considerations](https://tools.ietf.org/html/rfc6819)
-* [OAuth 2.0 Token Revocation](https://tools.ietf.org/html/rfc7009)
+* [OAuth 2.0 Token Revocation](https://tools.ietf.org/html/rfc7009)  - done
 * [Assertion Framework for OAuth 2.0 Client Authentication and Authorization Grants](https://tools.ietf.org/html/rfc7521)
 * [Security Assertion Markup Language (SAML) 2.0 Profile for OAuth 2.0 Client Authentication and Authorization Grants](https://tools.ietf.org/html/rfc7522)
 * [OAuth 2.0 Dynamic Client Registration Protocol](https://tools.ietf.org/html/rfc7591)

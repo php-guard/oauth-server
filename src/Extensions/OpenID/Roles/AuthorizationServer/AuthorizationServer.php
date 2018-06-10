@@ -17,7 +17,6 @@ use OAuth2\Extensions\OpenID\AuthorizationGrantTypes\Flows\HybridFlow;
 use OAuth2\Extensions\OpenID\AuthorizationGrantTypes\Flows\ImplicitFlow;
 use OAuth2\Extensions\OpenID\IdTokenManager;
 use OAuth2\Extensions\OpenID\Storages\StorageManager;
-use OAuth2\Roles\AuthorizationServer\EndUserInterface;
 use OAuth2\ScopePolicy\ScopePolicyManager;
 
 class AuthorizationServer extends \OAuth2\Roles\AuthorizationServer\AuthorizationServer

@@ -99,7 +99,7 @@ class ClientAuthenticationMethodManager
      * @return RegisteredClient
      * @throws OAuthException
      */
-    public function authenticate(ServerRequestInterface $request, array $requestData): ?RegisteredClient
+    public function authenticate(ServerRequestInterface $request, array $requestData): RegisteredClient
     {
         /**
          * @var ClientAuthenticationMethodInterface $clientAuthenticationMethod

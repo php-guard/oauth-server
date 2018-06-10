@@ -35,9 +35,13 @@ abstract class Token implements TokenInterface
      * @var string|null
      */
     protected $authorizationCode;
+    /**
+     * @var string|null
+     */
+    protected $refreshToken;
 
     public function __construct(string $token, array $scopes, string $clientIdentifier, ?string $resourceOwnerIdentifier,
-                                \DateTimeInterface $expiresAt, ?string $authorizationCode = null)
+                                \DateTimeInterface $expiresAt, ?string $authorizationCode = null, ?string $refreshToken = null)
     {
         $this->token = $token;
         $this->scopes = $scopes;
@@ -45,6 +49,7 @@ abstract class Token implements TokenInterface
         $this->resourceOwnerIdentifier = $resourceOwnerIdentifier;
         $this->expiresAt = $expiresAt;
         $this->authorizationCode = $authorizationCode;
+        $this->refreshToken = $refreshToken;
     }
 
     /**
@@ -94,4 +99,5 @@ abstract class Token implements TokenInterface
     {
         return $this->authorizationCode;
     }
+
 }

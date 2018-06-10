@@ -22,14 +22,14 @@ class RefreshTokenStorage implements RefreshTokenStorageInterface
      */
     protected $tokens = [];
 
-public function get(string $token): ?TokenInterface
+    public function get(string $token): ?TokenInterface
     {
         return $this->tokens[$token] ?? null;
     }
 
-public function revoke(string $token)
+    public function revoke(TokenInterface $token)
     {
-        unset($this->tokens[$token]);
+        unset($this->tokens[$token->getToken()]);
     }
 
     /**
@@ -40,11 +40,11 @@ public function revoke(string $token)
      * @return RefreshTokenInterface
      * @throws \Exception
      */
-public function generate(array $scopes, string $clientIdentifier,
-                      ?string $resourceOwnerIdentifier = null, ?string $authorizationCode = null): TokenInterface
+    public function generate(array $scopes, string $clientIdentifier,
+                             ?string $resourceOwnerIdentifier = null, ?string $authorizationCode = null): TokenInterface
     {
         $expiresAt = new \DateTime('now', new \DateTimeZone('UTC'));
-        $expiresAt->modify('+'.$this->getLifetime().' seconds');
+        $expiresAt->modify('+' . $this->getLifetime() . ' seconds');
 
         $refreshToken = new RefreshToken(Helper::generateToken(20), $scopes, $clientIdentifier, $resourceOwnerIdentifier,
             $expiresAt, $authorizationCode);
@@ -52,13 +52,13 @@ public function generate(array $scopes, string $clientIdentifier,
         return $refreshToken;
     }
 
-public function hasExpired(TokenInterface $refreshToken): bool
+    public function hasExpired(TokenInterface $refreshToken): bool
     {
         $now = new \DateTime('now', new \DateTimeZone('UTC'));
         return $now > $refreshToken->getExpiresAt();
     }
 
-public function getLifetime(): ?int
+    public function getLifetime(): ?int
     {
         return 3600 * 24 * 7;
     }
@@ -67,7 +67,7 @@ public function getLifetime(): ?int
      * @param string $code
      * @return TokenInterface[]|null
      */
-public function getByAuthorizationCode(string $code): array
+    public function getByAuthorizationCode(string $code): array
     {
         $tokens = [];
         foreach ($this->tokens as $token) {
@@ -78,7 +78,7 @@ public function getByAuthorizationCode(string $code): array
         return $tokens;
     }
 
-public function getSize(): ?int
+    public function getSize(): ?int
     {
         return 20;
     }

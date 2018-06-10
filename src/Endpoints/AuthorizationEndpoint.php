@@ -86,7 +86,7 @@ class AuthorizationEndpoint implements EndpointInterface
             $this->authorizationRequest = $this->authorizationRequestBuilder
                 ->build($request, $this->authorizationServerEndUser->getAuthenticatedResourceOwner());
         } catch (InvalidRequestMethod $e) {
-            return new Response(404);
+            return new Response(405);
         } catch (OAuthException $e) {
             /**
              * @see https://tools.ietf.org/html/rfc6749#section-4.1.2.1

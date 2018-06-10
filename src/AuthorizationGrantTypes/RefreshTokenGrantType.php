@@ -164,10 +164,9 @@ class RefreshTokenGrantType extends AbstractGrantType implements GrantTypeInterf
         }
 
         if ($this->config->mayRevokeOldRefreshToken()) {
-            $this->refreshTokenStorage->revoke($refreshToken->getToken());
+            $this->refreshTokenStorage->revoke($refreshToken);
 
             if ($this->config->mayIssueNewRefreshToken()) {
-                $this->refreshTokenStorage->revoke($refreshToken->getToken());
                 $refreshToken = $this->refreshTokenStorage->generate(
                     $refreshToken->getScopes(),
                     $refreshToken->getClientIdentifier(),

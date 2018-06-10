@@ -13,22 +13,22 @@ use OAuth2\Credentials\TokenInterface;
 
 interface TokenStorageInterface
 {
-public function get(string $token): ?TokenInterface;
+    public function get(string $token): ?TokenInterface;
 
-public function revoke(string $token);
+    public function revoke(TokenInterface $token);
 
-public function generate(array $scopes, string $clientIdentifier, ?string $resourceOwnerIdentifier = null,
-                      ?string $authorizationCode = null): TokenInterface;
+    public function generate(array $scopes, string $clientIdentifier, ?string $resourceOwnerIdentifier = null,
+                             ?string $authorizationCode = null): TokenInterface;
 
-public function getLifetime(): ?int;
+    public function getLifetime(): ?int;
 
     /**
      * @param string $code
      * @return TokenInterface[]|null
      */
-public function getByAuthorizationCode(string $code): array;
+    public function getByAuthorizationCode(string $code): array;
 
-public function hasExpired(TokenInterface $accessToken): bool;
+    public function hasExpired(TokenInterface $accessToken): bool;
 
-public function getSize(): ?int;
+    public function getSize(): ?int;
 }

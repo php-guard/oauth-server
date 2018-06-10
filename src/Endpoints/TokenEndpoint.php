@@ -15,7 +15,6 @@ use OAuth2\Exceptions\OAuthException;
 use OAuth2\AuthorizationGrantTypes\GrantTypeInterface;
 use OAuth2\AuthorizationGrantTypes\GrantTypeManager;
 use OAuth2\Roles\ClientTypes\RegisteredClient;
-use OAuth2\Storages\ClientStorageInterface;
 use Psr\Http\Message\ResponseInterface;
 use Psr\Http\Message\ServerRequestInterface;
 
@@ -54,10 +53,6 @@ use Psr\Http\Message\ServerRequestInterface;
 class TokenEndpoint implements EndpointInterface
 {
     /**
-     * @var ClientStorageInterface
-     */
-    private $clientStorage;
-    /**
      * @var GrantTypeManager
      */
     private $grantTypeManager;
@@ -75,11 +70,9 @@ class TokenEndpoint implements EndpointInterface
      */
     protected $grantType;
 
-    public function __construct(ClientStorageInterface $clientStorage,
-                                GrantTypeManager $grantTypeManager,
+    public function __construct(GrantTypeManager $grantTypeManager,
                                 ClientAuthenticationMethodManager $clientAuthenticationMethodManager)
     {
-        $this->clientStorage = $clientStorage;
         $this->grantTypeManager = $grantTypeManager;
         $this->clientAuthenticationMethodManager = $clientAuthenticationMethodManager;
     }
@@ -139,7 +132,7 @@ class TokenEndpoint implements EndpointInterface
         if ($request->getMethod() === 'POST') {
             $requestData = $request->getParsedBody();
         } else {
-            return new Response(404);
+            return new Response(405);
         }
 
         try {

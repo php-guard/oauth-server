@@ -24,6 +24,7 @@ use OAuth2\AuthorizationGrantTypes\Flows\ImplicitFlow;
 use OAuth2\AuthorizationGrantTypes\Flows\ResourceOwnerPasswordCredentialsFlow;
 use OAuth2\AuthorizationGrantTypes\GrantTypeManager;
 use OAuth2\AuthorizationGrantTypes\RefreshTokenGrantType;
+use OAuth2\Endpoints\TokenRevocationEndpoint;
 use OAuth2\ResponseModes\FragmentResponseMode;
 use OAuth2\ResponseModes\QueryResponseMode;
 use OAuth2\ResponseModes\ResponseModeManager;
@@ -38,11 +39,13 @@ class AuthorizationServer implements AuthorizationServerInterface
     protected $authorizationEndpoint;
     protected $tokenEndpoint;
     protected $responseTypeManager;
+    protected $storageManager;
     protected $scopePolicyManager;
     protected $grantTypeManager;
     protected $clientAuthenticationMethodManager;
     protected $responseModeManager;
     protected $flowManager;
+    protected $tokenRevocationEndpoint;
 
     public function __construct(Config $config,
                                 StorageManager $storageManager,
@@ -50,14 +53,15 @@ class AuthorizationServer implements AuthorizationServerInterface
                                 EndUserInterface $authorizationServerEndUser)
     {
         $this->responseTypeManager = new ResponseTypeManager();
-        $this->scopePolicyManager = $scopePolicyManager;
         $this->grantTypeManager = new GrantTypeManager();
+        $this->storageManager = $storageManager;
+        $this->scopePolicyManager = $scopePolicyManager;
 
-        $this->clientAuthenticationMethodManager = new ClientAuthenticationMethodManager($storageManager->getClientStorage());
+        $this->clientAuthenticationMethodManager = new ClientAuthenticationMethodManager($this->storageManager->getClientStorage());
         $this->clientAuthenticationMethodManager->addClientAuthenticationMethod('client_secret_basic',
-            new ClientSecretBasicAuthenticationMethod($storageManager->getClientStorage()));
+            new ClientSecretBasicAuthenticationMethod($this->storageManager->getClientStorage()));
         $this->clientAuthenticationMethodManager->addClientAuthenticationMethod('client_secret_post',
-            new ClientSecretPostAuthenticationMethod($storageManager->getClientStorage()));
+            new ClientSecretPostAuthenticationMethod($this->storageManager->getClientStorage()));
 
 //        $queryResponseMode = new QueryResponseMode();
         $this->responseModeManager = new ResponseModeManager();
@@ -68,35 +72,35 @@ class AuthorizationServer implements AuthorizationServerInterface
         // grant_type : authorization_code
         $authorizationCodeFlow = new AuthorizationCodeFlow(
             $config,
-            $storageManager->getAuthorizationCodeStorage(),
-            $storageManager->getAccessTokenStorage(),
-            $storageManager->getRefreshTokenStorage()
+            $this->storageManager->getAuthorizationCodeStorage(),
+            $this->storageManager->getAccessTokenStorage(),
+            $this->storageManager->getRefreshTokenStorage()
         );
 
         // response_type : token
         $implicitFlow = new ImplicitFlow(
-            $storageManager->getAccessTokenStorage(),
-            $storageManager->getRefreshTokenStorage()
+            $this->storageManager->getAccessTokenStorage(),
+            $this->storageManager->getRefreshTokenStorage()
         );
 
         // grant_type : password
         $resourceOwnerPasswordCredentialsFlow = new ResourceOwnerPasswordCredentialsFlow(
             $this->scopePolicyManager,
-            $storageManager->getResourceOwnerStorage(),
-            $storageManager->getAccessTokenStorage(),
-            $storageManager->getRefreshTokenStorage());
+            $this->storageManager->getResourceOwnerStorage(),
+            $this->storageManager->getAccessTokenStorage(),
+            $this->storageManager->getRefreshTokenStorage());
 
         // grant_type : client_credentials
         $clientCredentialsFlow = new ClientCredentialsFlow(
             $this->scopePolicyManager,
-            $storageManager->getAccessTokenStorage(),
-            $storageManager->getRefreshTokenStorage()
+            $this->storageManager->getAccessTokenStorage(),
+            $this->storageManager->getRefreshTokenStorage()
         );
 
         // grant_type : refresh_token
         $refreshTokenGrantType = new RefreshTokenGrantType(
-            $storageManager->getAccessTokenStorage(),
-            $storageManager->getRefreshTokenStorage(),
+            $this->storageManager->getAccessTokenStorage(),
+            $this->storageManager->getRefreshTokenStorage(),
             $config,
             $this->scopePolicyManager
         );
@@ -110,7 +114,7 @@ class AuthorizationServer implements AuthorizationServerInterface
         $this->grantTypeManager->addGrantType('refresh_token', $refreshTokenGrantType);
 
         $authorizationRequestBuilder = new AuthorizationRequestBuilder(
-            $storageManager->getClientStorage(),
+            $this->storageManager->getClientStorage(),
             $this->responseTypeManager,
             $this->responseModeManager,
             $this->scopePolicyManager
@@ -118,9 +122,12 @@ class AuthorizationServer implements AuthorizationServerInterface
         $this->authorizationEndpoint = new AuthorizationEndpoint($authorizationRequestBuilder, $authorizationServerEndUser);
 
         $this->tokenEndpoint = new TokenEndpoint(
-            $storageManager->getClientStorage(),
             $this->grantTypeManager,
             $this->clientAuthenticationMethodManager);
+
+        $this->tokenRevocationEndpoint = new TokenRevocationEndpoint(
+            $this->clientAuthenticationMethodManager,
+            $this->storageManager);
     }
 
     /**
@@ -137,6 +144,14 @@ class AuthorizationServer implements AuthorizationServerInterface
     public function getTokenEndpoint(): EndpointInterface
     {
         return $this->tokenEndpoint;
+    }
+
+    /**
+     * @return TokenRevocationEndpoint
+     */
+    public function getTokenRevocationEndpoint(): TokenRevocationEndpoint
+    {
+        return $this->tokenRevocationEndpoint;
     }
 
     /**
