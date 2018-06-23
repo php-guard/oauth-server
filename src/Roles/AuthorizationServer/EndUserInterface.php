@@ -9,6 +9,7 @@
 namespace OAuth2\Roles\AuthorizationServer;
 
 use OAuth2\Endpoints\Authorization\AuthorizationRequest;
+use OAuth2\Endpoints\Authorization\AuthorizationRequestInterface;
 use OAuth2\Roles\ClientInterface;
 use OAuth2\Roles\ResourceOwnerInterface;
 use Psr\Http\Message\ResponseInterface;
@@ -32,5 +33,5 @@ interface EndUserInterface
      */
     public function hasGivenConsent(ClientInterface $client, array $scopes): ?array;
 
-    public function obtainConsent(AuthorizationRequest $authorizationRequest): ResponseInterface;
+    public function obtainConsent(AuthorizationRequestInterface $authorizationRequest): ResponseInterface;
 }

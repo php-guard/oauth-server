@@ -10,6 +10,7 @@ namespace OAuth2\AuthorizationEndpointResponseTypes;
 
 
 use OAuth2\Endpoints\Authorization\AuthorizationRequest;
+use OAuth2\Endpoints\Authorization\AuthorizationRequestInterface;
 use OAuth2\Endpoints\AuthorizationEndpoint;
 
 /**
@@ -131,7 +132,9 @@ interface ResponseTypeInterface
      * HTTP/1.1 302 Found
      * Location: https://client.example.com/cb?error=access_denied&state=xyz
      */
-    public function handleAuthorizationRequest(AuthorizationRequest $authorizationRequest): array;
+    public function handleAuthorizationRequest(AuthorizationRequestInterface $authorizationRequest): array;
+
+//    public function setNextAuthorizationRequestHandler(ResponseTypeInterface $responseType);
 
     public function getDefaultResponseMode(): string;
 

@@ -9,6 +9,7 @@
 namespace OAuth2\Extensions\OpenID\AuthorizationGrantTypes\Flows;
 
 
+use OAuth2\Endpoints\Authorization\AuthorizationRequestInterface;
 use OAuth2\Endpoints\AuthorizationEndpoint;
 use OAuth2\Endpoints\TokenEndpoint;
 
@@ -59,7 +60,7 @@ class HybridFlow implements FlowInterface
     {
     }
 
-    public function handleAuthorizationRequest(AuthorizationEndpoint $authorizationEndpoint, array $requestData): array
+    public function handleAuthorizationRequest(AuthorizationRequestInterface $authorizationEndpoint): array
     {
         if (!$authorizationEndpoint instanceof \OAuth2\Extensions\OpenID\Endpoints\AuthorizationEndpoint) {
             throw new \InvalidArgumentException();
@@ -67,7 +68,7 @@ class HybridFlow implements FlowInterface
 
         $result = [];
         $idTokenClaims = [];
-        $responseTypes = explode(' ', $requestData['response_type']);
+        $responseTypes = explode(' ', $authorizationEndpoint->getData()['response_type']);
         if (in_array('code', $responseTypes)) {
 //            $resourceOwnerClaims = $authorizationEndpoint->getResourceOwner()->getClaims($authorizationEndpoint->getScopes());
 //            $idTokenTokenEndpoint = $this->idTokenManager->issueIdToken(

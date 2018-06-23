@@ -59,12 +59,12 @@ class AuthorizationRequestBuilder
     /**
      * @param ServerRequestInterface $request
      * @param ResourceOwnerInterface $resourceOwner
-     * @return AuthorizationRequest
+     * @return AuthorizationRequestInterface
      * @throws InvalidRequestMethod
      * @throws OAuthException
      * @throws InvalidAuthorizationRequest
      */
-    public function build(ServerRequestInterface $request, ResourceOwnerInterface $resourceOwner): AuthorizationRequest
+    public function build(ServerRequestInterface $request, ResourceOwnerInterface $resourceOwner): AuthorizationRequestInterface
     {
         if ($request->getMethod() === 'GET') {
             $data = $request->getQueryParams();
@@ -75,6 +75,7 @@ class AuthorizationRequestBuilder
         }
 
         $client = $this->getClient($data['client_id'] ?? null);
+
         $responseType = $this->getResponseType($client, $data['response_type'] ?? null);
         $redirectUri = $this->getRedirectUri($client, $responseType, $data['redirect_uri'] ?? null);
         $responseMode = $this->getResponseMode($responseType, $data['response_mode'] ?? null);

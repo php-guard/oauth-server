@@ -9,9 +9,12 @@
 namespace OAuth2\Extensions;
 
 
+use OAuth2\OAuthServer;
 use OAuth2\OAuthServerBuilder;
+use OAuth2\Roles\AuthorizationServer\AuthorizationServerBuilder;
 
 interface ExtensionInterface
 {
-    public function load(OAuthServerBuilder $builder);
+    public function extendAuthorizationServerBuilder(AuthorizationServerBuilder $builder);
+//    public function load(OAuthServer $server);
 }

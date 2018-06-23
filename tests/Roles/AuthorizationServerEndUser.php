@@ -12,6 +12,7 @@ namespace OAuth2\Tests\Roles;
 use GuzzleHttp\Psr7\Response;
 
 use OAuth2\Endpoints\Authorization\AuthorizationRequest;
+use OAuth2\Endpoints\Authorization\AuthorizationRequestInterface;
 use OAuth2\Extensions\OpenID\Roles\AuthorizationServer\EndUserInterface;
 use OAuth2\Roles\ClientInterface;
 use OAuth2\Roles\ResourceOwnerInterface;
@@ -31,10 +32,10 @@ class AuthorizationServerEndUser implements EndUserInterface
         return $this->resourceOwner;
     }
 
-    public function isResourceOwnerAuthenticated(bool $alwaysAuthenticate = false): bool
-    {
-        return true;
-    }
+//    public function isResourceOwnerAuthenticated(bool $alwaysAuthenticate = false): bool
+//    {
+//        return true;
+//    }
 
     public function authenticateResourceOwner(bool $accountSelectionRequired = false, ?string $loginHint = null): ResponseInterface
     {
@@ -58,7 +59,7 @@ class AuthorizationServerEndUser implements EndUserInterface
         return $scopes;
     }
 
-    public function obtainConsent(AuthorizationRequest $authorizationRequest): ResponseInterface
+    public function obtainConsent(AuthorizationRequestInterface $authorizationRequest): ResponseInterface
     {
         return new Response();
     }

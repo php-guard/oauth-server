@@ -11,7 +11,7 @@ namespace OAuth2;
 
 abstract class Helper
 {
-    const CHARS = "0123456789ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz";
+    const CHARS = "0123456789ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz"; // [A-Z] / [a-z] / [0-9]
     const LENGTH = 22;
 
     public static function containsNotAsciiChar(string $string)

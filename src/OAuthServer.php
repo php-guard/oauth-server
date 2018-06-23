@@ -21,40 +21,12 @@ class OAuthServer
 {
     private $authorizationServer;
     private $resourceServer;
-    private $scopePolicyManager;
-    private $storageManager;
-    /**
-     * @var Config
-     */
-    private $config;
-    /**
-     * @var EndUserInterface
-     */
-    private $endUser;
 
-    public function __construct(Config $config,
-                                EndUserInterface $endUser,
-                                StorageManager $storageManager)
+    public function __construct(AuthorizationServer $authorizationServer,
+                                ResourceServer $resourceServer)
     {
-        $this->config = $config;
-        $this->endUser = $endUser;
-
-        $this->storageManager = $storageManager;
-
-        $this->scopePolicyManager = new ScopePolicyManager($config);
-
-        $this->authorizationServer = $this->createAuthorizationServer();
-        $this->resourceServer = $this->createResourceServer();
-    }
-
-    protected function createAuthorizationServer() {
-        return new AuthorizationServer($this->config, $this->storageManager, $this->scopePolicyManager, $this->endUser);
-    }
-
-    protected function createResourceServer() {
-        return (new ResourceServer($this->storageManager, $this->scopePolicyManager))
-            ->addBearerAuthenticationMethod(new FormEncodedBodyParameter())
-            ->addBearerAuthenticationMethod(new URIQueryParameter());
+        $this->authorizationServer = $authorizationServer;
+        $this->resourceServer = $resourceServer;
     }
 
     /**

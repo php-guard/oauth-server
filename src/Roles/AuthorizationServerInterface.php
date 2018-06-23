@@ -23,4 +23,6 @@ interface AuthorizationServerInterface
     public function getAuthorizationEndpoint(): EndpointInterface;
 
     public function getTokenEndpoint(): EndpointInterface;
+
+    public function getTokenRevocationEndpoint(): EndpointInterface;
 }

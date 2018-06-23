@@ -10,16 +10,14 @@ namespace OAuth2\Extensions\PKCE\AuthorizationGrantTypes\Flows;
 
 
 use OAuth2\AuthorizationGrantTypes\Flows\FlowInterface;
-use OAuth2\Config;
 use OAuth2\Endpoints\Authorization\AuthorizationRequest;
+use OAuth2\Endpoints\Authorization\AuthorizationRequestInterface;
 use OAuth2\Endpoints\TokenEndpoint;
 use OAuth2\Exceptions\OAuthException;
 use OAuth2\Extensions\PKCE\Credentials\AuthorizationCodeInterface;
 use OAuth2\Extensions\PKCE\Endpoints\Authorization\AuthorizationRequest as PKCEAuthorizationRequest;
 use OAuth2\Extensions\PKCE\Storages\AuthorizationCodeStorageInterface;
 use OAuth2\Helper;
-use OAuth2\Storages\AccessTokenStorageInterface;
-use OAuth2\Storages\RefreshTokenStorageInterface;
 
 /**
  * Class AuthorizationCodeFlow
@@ -29,28 +27,32 @@ use OAuth2\Storages\RefreshTokenStorageInterface;
 class AuthorizationCodeFlow implements FlowInterface
 {
     /**
-     * @var AuthorizationCodeStorageInterface
-     */
-    protected $authorizationCodeStorage;
-    /**
      * @var \OAuth2\AuthorizationGrantTypes\Flows\AuthorizationCodeFlow
      */
     private $authorizationCodeFlow;
+    /**
+     * @var AuthorizationCodeStorageInterface
+     */
+    protected $authorizationCodeStorage;
 
     /**
      * AuthorizationCodeFlow constructor.
      * @param \OAuth2\AuthorizationGrantTypes\Flows\AuthorizationCodeFlow $authorizationCodeFlow
+     * @param AuthorizationCodeStorageInterface $authorizationCodeStorage
      */
-    public function __construct(\OAuth2\AuthorizationGrantTypes\Flows\AuthorizationCodeFlow $authorizationCodeFlow)
+    public function __construct(
+        \OAuth2\AuthorizationGrantTypes\Flows\AuthorizationCodeFlow $authorizationCodeFlow,
+        AuthorizationCodeStorageInterface $authorizationCodeStorage)
     {
         $this->authorizationCodeFlow = $authorizationCodeFlow;
+        $this->authorizationCodeStorage = $authorizationCodeStorage;
     }
 
     /**
-     * @param AuthorizationRequest $authorizationRequest
+     * @param AuthorizationRequestInterface $authorizationRequest
      * @return array
      */
-    public function handleAuthorizationRequest(AuthorizationRequest $authorizationRequest): array
+    public function handleAuthorizationRequest(AuthorizationRequestInterface $authorizationRequest): array
     {
         $response = $this->authorizationCodeFlow->handleAuthorizationRequest($authorizationRequest);
 

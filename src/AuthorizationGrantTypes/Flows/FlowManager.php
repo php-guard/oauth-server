@@ -30,14 +30,23 @@ class FlowManager
         $this->grantTypeManager = $grantTypeManager;
     }
 
-    public function addFlow(FlowInterface $flow)
+    public function addFlow(string $identifier, FlowInterface $flow): self
     {
+        $this->flows[$identifier] = $flow;
+
         foreach ($flow->getResponseTypes() as $responseType) {
-            $this->responseTypeManager->addResponseType($responseType, $flow);
+            $this->responseTypeManager->setResponseType($responseType, $flow);
         }
 
         foreach ($flow->getGrantTypes() as $grantType) {
-            $this->grantTypeManager->addGrantType($grantType, $flow);
+            $this->grantTypeManager->setGrantType($grantType, $flow);
         }
+
+        return $this;
+    }
+
+    public function getFlow(string $identifier): ?FlowInterface
+    {
+        return $this->flows[$identifier] ?? null;
     }
 }

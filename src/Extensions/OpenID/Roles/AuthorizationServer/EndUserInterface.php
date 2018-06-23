@@ -11,6 +11,7 @@ namespace OAuth2\Extensions\OpenID\Roles\AuthorizationServer;
 
 
 use OAuth2\Endpoints\Authorization\AuthorizationRequest;
+use OAuth2\Endpoints\Authorization\AuthorizationRequestInterface;
 use OAuth2\Roles\ClientInterface;
 use Psr\Http\Message\ResponseInterface;
 
@@ -38,7 +39,7 @@ interface EndUserInterface extends \OAuth2\Roles\AuthorizationServer\EndUserInte
 
     public function hasGivenConsent(ClientInterface $client, array $scopes, ?bool $alwaysPromptConsent = false): ?array;
 
-    public function obtainConsent(AuthorizationRequest $authorizationRequest): ResponseInterface;
+    public function obtainConsent(AuthorizationRequestInterface $authorizationRequest): ResponseInterface;
 
     public function isInteractionRequiredForConsent(AuthorizationRequest $authorizationRequest): bool;
 

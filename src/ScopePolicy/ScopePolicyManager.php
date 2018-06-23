@@ -9,10 +9,10 @@
 namespace OAuth2\ScopePolicy;
 
 
-use OAuth2\Config;
 use OAuth2\Exceptions\OAuthException;
 use OAuth2\Roles\ClientInterface;
 use OAuth2\Roles\ClientTypes\RegisteredClient;
+use OAuth2\ScopePolicy\Policies\ScopePolicyInterface;
 
 
 /**
@@ -50,18 +50,17 @@ use OAuth2\Roles\ClientTypes\RegisteredClient;
 class ScopePolicyManager
 {
     /**
-     * @var Config
+     * @var ScopePolicyInterface
      */
-    private $config;
+    private $scopePolicy;
 
     /**
      * ScopePolicyManager constructor.
-     * @param Config $config
-     * @throws \Exception
+     * @param ScopePolicyInterface $scopePolicy
      */
-    public function __construct(Config $config)
+    public function __construct(ScopePolicyInterface $scopePolicy)
     {
-        $this->config = $config;
+        $this->scopePolicy = $scopePolicy;
     }
 
     /**
@@ -90,7 +89,7 @@ class ScopePolicyManager
      */
     public function getScopes(ClientInterface $client, ?array $requestedScopes): array
     {
-        $scopes = $this->config->getScopePolicy()->getScopes($client, $requestedScopes);
+        $scopes = $this->scopePolicy->getScopes($client, $requestedScopes);
 
         if (empty($scopes)) {
             throw new OAuthException('invalid_scope',

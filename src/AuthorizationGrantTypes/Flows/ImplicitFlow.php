@@ -10,6 +10,7 @@ namespace OAuth2\AuthorizationGrantTypes\Flows;
 
 
 use OAuth2\Endpoints\Authorization\AuthorizationRequest;
+use OAuth2\Endpoints\Authorization\AuthorizationRequestInterface;
 use OAuth2\Endpoints\TokenEndpoint;
 use OAuth2\AuthorizationGrantTypes\AbstractGrantType;
 use OAuth2\Helper;
@@ -141,7 +142,7 @@ class ImplicitFlow extends AbstractGrantType implements FlowInterface
      * client should avoid making assumptions about value sizes.  The
      * authorization server SHOULD document the size of any value it issues.
      */
-    public function handleAuthorizationRequest(AuthorizationRequest $authorizationRequest): array
+    public function handleAuthorizationRequest(AuthorizationRequestInterface $authorizationRequest): array
     {
         $data = $this->issueAccessToken(
             $authorizationRequest->getScopes(),

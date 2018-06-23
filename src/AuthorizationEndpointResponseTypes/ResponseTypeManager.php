@@ -13,9 +13,10 @@ class ResponseTypeManager
 {
     protected $responseTypes = [];
 
-    public function addResponseType(string $identifier, ResponseTypeInterface $responseType)
+    public function setResponseType(string $identifier, ResponseTypeInterface $responseType): self
     {
         $this->responseTypes[$identifier] = $responseType;
+        return $this;
     }
 
     public function getResponseType(string $identifier): ?ResponseTypeInterface

@@ -23,7 +23,7 @@ use Psr\Http\Message\UriInterface;
  * Class AuthorizationRequest
  * @package OAuth2\Endpoints
  */
-class AuthorizationRequest
+class AuthorizationRequest implements AuthorizationRequestInterface
 {
     /**
      * @var array

@@ -9,6 +9,7 @@
 namespace OAuth2\Tests\Endpoints;
 
 
+use OAuth2\Extensions\PKCE\PKCEExtension;
 use OAuth2\OAuthServer;
 use OAuth2\OAuthServerBuilder;
 use OAuth2\Roles\ClientProfiles\WebApplicationClient;
@@ -47,6 +48,8 @@ abstract class Endpoint extends TestCase
             ->setAuthorizationCodeStorage(new AuthorizationCodeStorage())
             ->setAccessTokenStorage(new AccessTokenStorage())
             ->setRefreshTokenStorage(new RefreshTokenStorage());
+
+        $builder->addExtension(new PKCEExtension());
 
         $this->server = $builder->build();
 

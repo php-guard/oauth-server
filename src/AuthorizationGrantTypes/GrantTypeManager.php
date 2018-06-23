@@ -16,6 +16,7 @@ class GrantTypeManager
     /**
      * @param string $identifier
      * @param GrantTypeInterface $grantType
+     * @return GrantTypeManager
      *
      * @see https://tools.ietf.org/html/rfc6749#section-4.5
      * The client uses an extension grant type by specifying the grant type
@@ -23,9 +24,10 @@ class GrantTypeManager
      * value of the "grant_type" parameter of the token endpoint, and by
      * adding any additional parameters necessary.
      */
-    public function addGrantType(string $identifier, GrantTypeInterface $grantType)
+    public function setGrantType(string $identifier, GrantTypeInterface $grantType): self
     {
         $this->grantTypes[$identifier] = $grantType;
+        return $this;
     }
 
     public function getGrantType(string $identifier): ?GrantTypeInterface

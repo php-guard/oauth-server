@@ -10,7 +10,12 @@ namespace OAuth2;
 
 
 use OAuth2\Extensions\ExtensionInterface;
+use OAuth2\Roles\AuthorizationServer\AuthorizationServerBuilder;
 use OAuth2\Roles\AuthorizationServer\EndUserInterface;
+use OAuth2\Roles\ResourceServer\BearerAuthenticationMethods\FormEncodedBodyParameter;
+use OAuth2\Roles\ResourceServer\BearerAuthenticationMethods\URIQueryParameter;
+use OAuth2\Roles\ResourceServer\ResourceServer;
+use OAuth2\ScopePolicy\ScopePolicyManager;
 use OAuth2\Storages\StorageManager;
 use OAuth2\Storages\StorageRepositoryBuilder;
 
@@ -57,10 +62,21 @@ class OAuthServerBuilder
 
     public function build()
     {
-        foreach ($this->extensions as $extension) {
-            $extension->load($this);
-        }
+        $scopePolicyManager= new ScopePolicyManager($this->config->getScopePolicy());
         $storageManager = $this->storages->build();
-        return new OAuthServer($this->config, $this->endUser, $storageManager);
+
+        $authorizationServerBuilder = new AuthorizationServerBuilder($this->config, $storageManager, $scopePolicyManager, $this->endUser);
+        foreach ($this->extensions as $extension) {
+            $extension->extendAuthorizationServerBuilder($authorizationServerBuilder);
+        }
+        $authorizationServer = $authorizationServerBuilder->build();
+
+        $resourceServer = (new ResourceServer($storageManager, $scopePolicyManager))
+            ->addBearerAuthenticationMethod(new FormEncodedBodyParameter())
+            ->addBearerAuthenticationMethod(new URIQueryParameter());
+
+        $server = new OAuthServer($authorizationServer, $resourceServer);
+
+        return $server;
     }
 }

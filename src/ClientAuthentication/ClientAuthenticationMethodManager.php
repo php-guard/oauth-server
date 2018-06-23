@@ -83,9 +83,11 @@ class ClientAuthenticationMethodManager
         $this->clientStorage = $clientStorage;
     }
 
-    public function addClientAuthenticationMethod(string $identifier, ClientAuthenticationMethodInterface $clientAuthenticationMethod)
+    public function setClientAuthenticationMethod(string $identifier,
+                                                  ClientAuthenticationMethodInterface $clientAuthenticationMethod): self
     {
         $this->clientAuthenticationMethods[$identifier] = $clientAuthenticationMethod;
+        return $this;
     }
 
     public function getClientAuthenticationMethod(string $identifier): ?ClientAuthenticationMethodInterface

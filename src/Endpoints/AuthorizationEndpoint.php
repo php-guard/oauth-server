@@ -12,6 +12,7 @@ namespace OAuth2\Endpoints;
 use GuzzleHttp\Psr7\Response;
 use OAuth2\Endpoints\Authorization\AuthorizationRequest;
 use OAuth2\Endpoints\Authorization\AuthorizationRequestBuilder;
+use OAuth2\Endpoints\Authorization\AuthorizationRequestInterface;
 use OAuth2\Exceptions\InvalidAuthorizationRequest;
 use OAuth2\Exceptions\InvalidRequestMethod;
 use OAuth2\Exceptions\OAuthException;
@@ -246,11 +247,11 @@ class AuthorizationEndpoint implements EndpointInterface
 
 
     /**
-     * @param AuthorizationRequest $authorizationRequest
+     * @param AuthorizationRequestInterface $authorizationRequest
      * @return null|ResponseInterface
      * @throws OAuthException
      */
-    protected function verifyConsent(AuthorizationRequest $authorizationRequest): ?ResponseInterface
+    protected function verifyConsent(AuthorizationRequestInterface $authorizationRequest): ?ResponseInterface
     {
         $consentGiven = $this->authorizationServerEndUser->hasGivenConsent($authorizationRequest->getClient(), $authorizationRequest->getScopes());
         if (is_null($consentGiven)) {

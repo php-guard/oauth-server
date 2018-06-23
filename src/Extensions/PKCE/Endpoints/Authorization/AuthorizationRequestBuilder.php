@@ -9,6 +9,7 @@
 namespace OAuth2\Extensions\PKCE\Endpoints\Authorization;
 
 
+use OAuth2\Endpoints\Authorization\AuthorizationRequestInterface;
 use OAuth2\Exceptions\InvalidAuthorizationRequest;
 use OAuth2\Exceptions\InvalidRequestMethod;
 use OAuth2\Exceptions\OAuthException;
@@ -21,12 +22,12 @@ class AuthorizationRequestBuilder extends \OAuth2\Endpoints\Authorization\Author
     /**
      * @param ServerRequestInterface $request
      * @param ResourceOwnerInterface $resourceOwner
-     * @return AuthorizationRequest
+     * @return AuthorizationRequestInterface
      * @throws InvalidRequestMethod
      * @throws OAuthException
      * @throws InvalidAuthorizationRequest
      */
-    public function build(ServerRequestInterface $request, ResourceOwnerInterface $resourceOwner): \OAuth2\Endpoints\Authorization\AuthorizationRequest
+    public function build(ServerRequestInterface $request, ResourceOwnerInterface $resourceOwner): AuthorizationRequestInterface
     {
         $authorizationRequest = parent::build($request, $resourceOwner);
 

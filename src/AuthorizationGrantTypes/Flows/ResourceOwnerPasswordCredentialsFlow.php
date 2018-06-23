@@ -10,6 +10,7 @@ namespace OAuth2\AuthorizationGrantTypes\Flows;
 
 
 use OAuth2\Endpoints\Authorization\AuthorizationRequest;
+use OAuth2\Endpoints\Authorization\AuthorizationRequestInterface;
 use OAuth2\Endpoints\TokenEndpoint;
 use OAuth2\Exceptions\OAuthException;
 use OAuth2\AuthorizationGrantTypes\AbstractGrantType;
@@ -198,7 +199,7 @@ class ResourceOwnerPasswordCredentialsFlow extends AbstractGrantType implements 
         throw new \BadMethodCallException();
     }
 
-    public function handleAuthorizationRequest(AuthorizationRequest $authorizationRequest): array
+    public function handleAuthorizationRequest(AuthorizationRequestInterface $authorizationRequest): array
     {
         throw new \BadMethodCallException();
     }
