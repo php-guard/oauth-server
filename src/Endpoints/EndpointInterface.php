@@ -11,6 +11,7 @@ namespace OAuth2\Endpoints;
 
 use Psr\Http\Message\ResponseInterface;
 use Psr\Http\Message\ServerRequestInterface;
+use Psr\Http\Server\RequestHandlerInterface;
 
 /**
  * Interface EndpointInterface
@@ -35,7 +36,7 @@ use Psr\Http\Message\ServerRequestInterface;
  * Not every authorization grant type utilizes both endpoints.
  * Extension grant types MAY define additional endpoints as needed.
  */
-interface EndpointInterface
+interface EndpointInterface extends RequestHandlerInterface
 {
-public function handleRequest(ServerRequestInterface $request): ResponseInterface;
+public function handle(ServerRequestInterface $request): ResponseInterface;
 }

@@ -9,9 +9,8 @@
 namespace OAuth2\Tests\Endpoints;
 
 
-use OAuth2\Config;
 use OAuth2\OAuthServer;
-use OAuth2\Storages\StorageManager;
+use OAuth2\OAuthServerBuilder;
 use OAuth2\Roles\ClientProfiles\WebApplicationClient;
 use OAuth2\ScopePolicy\Policies\DefaultScopePolicy;
 use OAuth2\Tests\Roles\AuthorizationServerEndUser;
@@ -38,18 +37,22 @@ abstract class Endpoint extends TestCase
 
     public function setUp()
     {
-        $scopePolicy = new DefaultScopePolicy(['email']);
-        $this->config = new Config($scopePolicy); //'phpunit@oauth-server.com'
-        $authorizationServerEndUser = new AuthorizationServerEndUser();
-
         $clientStorage = new ClientStorage();
 
-        $this->server = new OAuthServer($this->config, $authorizationServerEndUser,
-            $clientStorage,
-            new ResourceOwnerStorage(),
-            new AuthorizationCodeStorage(),
-            new AccessTokenStorage(),
-            new RefreshTokenStorage());
+        $builder = new OAuthServerBuilder(new AuthorizationServerEndUser());
+        $builder->getConfig()->setScopePolicy(new DefaultScopePolicy(['email']));
+        $builder->getStorages()
+            ->setResourceOwnerStorage(new ResourceOwnerStorage())
+            ->setClientStorage($clientStorage)
+            ->setAuthorizationCodeStorage(new AuthorizationCodeStorage())
+            ->setAccessTokenStorage(new AccessTokenStorage())
+            ->setRefreshTokenStorage(new RefreshTokenStorage());
+
+        $this->server = $builder->build();
+
+//        $scopePolicy = ;
+//        $this->config = new Config($scopePolicy); //'phpunit@oauth-server.com'
+//        $authorizationServerEndUser = new AuthorizationServerEndUser();
 
         $this->client = $clientStorage->get('phpunit');
     }
